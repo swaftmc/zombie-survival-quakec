@@ -49,6 +49,8 @@ float(float weapon) WepDef_GetCategory =
 		// --- tesla family: arcs between targets ---
 		case W_TESLA:
 		case W_DG3:
+		case W_DG5:
+		case W_DG5PAP:
 			return WCAT_WONDER_SHOCK;
 
 		// --- incendiary: leaves the target burning ---
@@ -58,6 +60,8 @@ float(float weapon) WepDef_GetCategory =
 
 		// --- cryo: slows and brittles ---
 		case W_FIW:
+		case W_F2W:
+		case W_F2WPAP:
 			return WCAT_WONDER_CRYO;
 
 		// --- heavy: explosive payloads ---
@@ -81,9 +85,94 @@ float(float weapon) WepDef_GetCategory =
 		case W_PPSH:
 		case W_REAPER:
 		case W_PTRS:
+		case W_SPRING:
+		case W_MP5KPDW:
+		case W_MP5KPDWPAP:
+		case W_M40A1:
+		case W_M40A1PAP:
+		case W_MOSSBERG:
+		case W_MOSSBERGPAP:
+		case W_MG4:
+		case W_MG4PAP:
+		case W_VITYAZ:
+		case W_VITYAZPAP:
+		case W_SMAW:
+		case W_SMAWPAP:
 			return WCAT_MODERN;
 
-		// everything else is Cold War issue
+		// --- near-future / experimental ---
+		case W_AW50:
+		case W_AW50PAP:
+			return WCAT_PROTOTYPE;
+
+		// --- Cold War issue: the original 1960s-80s roster plus the variants built on it.
+		// Naming them all out rather than leaning on the default keeps the table complete,
+		// so the era of every shipped weapon is written down somewhere.
+		case W_COLT:
+		case W_KAR:
+		case W_THOMPSON:
+		case W_357:
+		case W_BAR:
+		case W_BROWNING:
+		case W_DB:
+		case W_FG:
+		case W_GEWEHR:
+		case W_KAR_SCOPE:
+		case W_M1:
+		case W_M1A1:
+		case W_MP40:
+		case W_MG:
+		case W_PANZER:
+		case W_SAWNOFF:
+		case W_STG:
+		case W_TRENCH:
+		case W_TYPE:
+		case W_BIATCH:
+		case W_KILLU:
+		case W_COMPRESSOR:
+		case W_M1000:
+		case W_WIDDER:
+		case W_ARMAGEDDON:
+		case W_GIBS:
+		case W_SAMURAI:
+		case W_SPATZ:
+		case W_SNUFF:
+		case W_BORE:
+		case W_IMPELLER:
+		case W_BARRACUDA:
+		case W_ACCELERATOR:
+		case W_GUT:
+		case W_HEADCRACKER:
+		case W_WIDOW:
+		case W_HIPOWER:
+		case W_HIPOWERPAP:
+		case W_MODEL70:
+		case W_MODEL70PAP:
+		case W_MAGNUM44:
+		case W_MAGNUM44PAP:
+		case W_COACHGUN:
+		case W_COACHGUNPAP:
+		case W_SLR:
+		case W_SLRPAP:
+		case W_GALIL:
+		case W_GALILPAP:
+		case W_PKM:
+		case W_PKMPAP:
+		case W_VSS:
+		case W_VSSPAP:
+		case W_M2CARBINE:
+		case W_M2CARBINEPAP:
+		case W_MP5SD:
+		case W_MP5SDPAP:
+		case W_CGM45:
+		case W_CGM45PAP:
+		case W_PSG1:
+		case W_PSG1PAP:
+		case W_AKS74U:
+		case W_AKS74UPAP:
+			return WCAT_RETRO;
+
+		// An id nobody has categorised yet: the original roster's era is the safe answer.
 		default:
 			return WCAT_RETRO;
 	}

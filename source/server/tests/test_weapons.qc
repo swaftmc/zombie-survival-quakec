@@ -428,3 +428,124 @@ void() Test_WallWeapons_ActivatesAllTargets =
     self = old_self;
     remove(weapon);
 };
+
+//
+// Test_Weapons_VariantRoster()
+// The variants are the weapons whose base entry names something other than themselves:
+// a weapon that borrows a shipped silhouette. Each one has to carry a name, a magazine, a
+// category and the base weapon's model, and an element only when its category is a wonder
+// family. Upgrade halves are the pairing test's business, so they are skipped here.
+//
+void() Test_Weapons_VariantRoster =
+{
+    float variants = 0;
+
+    // Walk the id space: a variant whose tables were filled in but whose base row was not
+    // does not report itself as a variant, so this is what catches a hole in the roster.
+    for (float weapon = 1; weapon <= W_MAX; weapon++) {
+        float base_weapon = WepDef_GetBaseWeapon(weapon);
+
+        if (base_weapon == weapon || IsPapWeapon(weapon))
+            continue;
+
+        variants++;
+
+        Test_Assert(base_weapon > 0 && base_weapon < weapon,
+            sprintf("[%s] borrows something that is not on the shipped roster!", GetWeaponName(weapon, -1)));
+        Test_Assert(GetWeaponModel(weapon, 0) == GetWeaponModel(base_weapon, 0),
+            sprintf("[%s] does not reuse its base weapon's model!", GetWeaponName(weapon, -1)));
+        Test_Assert(GetWeaponName(weapon, -1) != "",
+            sprintf("Weapon id %d is a variant with no name!", weapon));
+        Test_Assert(getWeaponMag(weapon) > 0,
+            sprintf("[%s] has no magazine!", GetWeaponName(weapon, -1)));
+        Test_Assert(WepDef_GetCategoryName(WepDef_GetCategory(weapon)) != "Unknown",
+            sprintf("[%s] has no readable category name!", GetWeaponName(weapon, -1)));
+
+        if (WepDef_IsWonderWeapon(weapon))
+            Test_Assert(WepDef_GetElement(weapon) != WELEM_NONE,
+                sprintf("[%s] is a wonder weapon without an element!", GetWeaponName(weapon, -1)));
+        else
+            Test_Assert(WepDef_GetElement(weapon) == WELEM_NONE,
+                sprintf("[%s] carries an element but is not a wonder weapon!", GetWeaponName(weapon, -1)));
+    }
+
+    Test_Assert(variants >= 20,
+        "The roster has fewer new weapons than the twenty this pass was meant to add!");
+
+    // The category table names every id out, so a variant cannot land in the retro
+    // fallback by accident.
+    Test_Assert(WepDef_GetCategory(W_SLR) == WCAT_RETRO, "The L1A1 SLR is not Cold War issue!");
+    Test_Assert(WepDef_GetCategory(W_HIPOWER) == WCAT_RETRO, "The Hi-Power is not Cold War issue!");
+    Test_Assert(WepDef_GetCategory(W_MP5KPDW) == WCAT_MODERN, "The MP5K-PDW is not a modern weapon!");
+    Test_Assert(WepDef_GetCategory(W_SMAW) == WCAT_MODERN, "The SMAW is not a modern weapon!");
+    Test_Assert(WepDef_GetCategory(W_AW50) == WCAT_PROTOTYPE, "The AW50 is not a prototype weapon!");
+    Test_Assert(WepDef_GetCategory(W_F2W) == WCAT_WONDER_CRYO, "The F2W is not a cryo weapon!");
+    Test_Assert(WepDef_GetCategory(W_DG5) == WCAT_WONDER_SHOCK, "The DG-5 is not a shock weapon!");
+};
+
+//
+// Test_Weapons_VariantPackAPunchPairs()
+// The pairing is one-to-one - upgrading a weapon and then reading it back returns the
+// weapon the player was holding - and every variant has its own upgrade half.
+//
+void() Test_Weapons_VariantPackAPunchPairs =
+{
+    // Upgrading is a fixed point over the whole id space: an upgraded weapon stays itself,
+    // upgrading always leaves the same stock weapon behind, and asking from either side
+    // reaches the same pair. The custom slots are not weapons and share one upgrade id per
+    // pair, so they are the one place where this is deliberately not one-to-one.
+    for (float weapon = 1; weapon <= W_MAX; weapon++) {
+        if (weapon >= W_CUSTOM1 && weapon <= W_CUSTOM4)
+            continue;
+
+        float upgraded = EqualPapWeapon(weapon);
+        float stock = EqualNonPapWeapon(weapon);
+
+        Test_Assert(EqualPapWeapon(upgraded) == upgraded,
+            sprintf("[%s] does not stay upgraded!", GetWeaponName(weapon, -1)));
+        Test_Assert(EqualNonPapWeapon(upgraded) == stock,
+            sprintf("[%s] disagrees with its stock weapon about the pair it is in!", GetWeaponName(weapon, -1)));
+        Test_Assert(EqualPapWeapon(stock) == upgraded,
+            sprintf("[%s] upgrades into a different weapon from either direction!", GetWeaponName(weapon, -1)));
+    }
+
+    for (float weapon = 1; weapon <= W_MAX; weapon++) {
+        if (WepDef_GetBaseWeapon(weapon) == weapon || IsPapWeapon(weapon))
+            continue;
+
+        float upgraded = EqualPapWeapon(weapon);
+
+        Test_Assert(upgraded != weapon,
+            sprintf("[%s] has no Pack-a-Punch counterpart!", GetWeaponName(weapon, -1)));
+        Test_Assert(IsPapWeapon(upgraded),
+            sprintf("[%s] upgrades into a weapon that is not upgraded!", GetWeaponName(weapon, -1)));
+        Test_Assert(EqualNonPapWeapon(upgraded) == weapon,
+            sprintf("[%s] does not round-trip through its Pack-a-Punch half!", GetWeaponName(weapon, -1)));
+        Test_Assert(GetWeaponName(upgraded, -1) != "",
+            sprintf("[%s] upgrades into a weapon with no name!", GetWeaponName(weapon, -1)));
+        Test_Assert(getWeaponMag(upgraded) > 0,
+            sprintf("[%s] upgrades into a weapon with no magazine!", GetWeaponName(weapon, -1)));
+        Test_Assert(WepDef_GetBaseWeapon(upgraded) != upgraded,
+            sprintf("[%s] upgrades into a weapon that does not reuse a silhouette!", GetWeaponName(weapon, -1)));
+    }
+};
+
+//
+// Test_Weapons_VariantsAreRetuned()
+// A variant is not a rename: it has to differ from the weapon it borrows in at least one
+// number the player can feel.
+//
+void() Test_Weapons_VariantsAreRetuned =
+{
+    for (float weapon = 1; weapon <= W_MAX; weapon++) {
+        float base_weapon = WepDef_GetBaseWeapon(weapon);
+
+        if (base_weapon == weapon || IsPapWeapon(weapon))
+            continue;
+
+        Test_Assert((getWeaponMag(weapon) != getWeaponMag(base_weapon)) ||
+            (getWeaponAmmo(weapon) != getWeaponAmmo(base_weapon)) ||
+            (GetFiretype(weapon) != GetFiretype(base_weapon)),
+            sprintf("[%s] is a rename of its base weapon, not a variant!", GetWeaponName(weapon, -1)));
+    }
+};

@@ -584,7 +584,9 @@ void () W_LoadAmmo =
 	delay = getWeaponDelay(self.weapon,RELOAD);
 	void(optional float t) endanimfunc = SUB_Null;
 
-	if (self.weapon == W_TRENCH || self.weapon == W_GUT)
+	// The hand-worked actions have their own reload frames, asked as a family so a variant
+	// of a pump shotgun or a bolt-action rifle reloads the way its donor does.
+	if (WepDef_IsPumpShotgun(self.weapon))
 	{
 		startframe = 4;
 		endframe = 14;
@@ -592,7 +594,7 @@ void () W_LoadAmmo =
 		delay = 0.9;
 		endanimfunc = W_LoadAmmoDone;
 	}
-	else if (self.weapon == W_KAR || self.weapon == W_ARMAGEDDON || self.weapon == W_KAR_SCOPE || self.weapon == W_HEADCRACKER || self.weapon == W_SPRING || self.weapon == W_PULVERIZER)
+	else if (WepDef_IsBoltAction(self.weapon))
 	{
 		startframe = 4;
 		endframe = 13;
@@ -994,7 +996,10 @@ void (float shotcount, float sprd, float Damage, float side) FireTrace =
 
 		count++;
 	}
-	if (self.weapon != W_TESLA)
+	// The tesla family applies its own damage through its arc code, so the hitscan path
+	// must not do it again. Asked against the base weapon so a variant of the Wunderwaffe
+	// behaves exactly like the Wunderwaffe.
+	if (WepDef_GetBaseWeapon(self.weapon) != W_TESLA)
 		Parse_Damage();
 
 }
@@ -1068,7 +1073,7 @@ void(float side) W_Fire =
 	}
 
 	//Dont fire if the gun has to cycle
-	if (self.NeedLoad && (self.weapon == W_TRENCH || self.weapon == W_GUT || self.weapon == W_KAR_SCOPE || self.weapon == W_KAR || self.weapon == W_ARMAGEDDON || self.weapon == W_HEADCRACKER || self.weapon == W_SPRING || self.weapon == W_PULVERIZER))
+	if (self.NeedLoad && (WepDef_IsPumpShotgun(self.weapon) || WepDef_IsBoltAction(self.weapon)))
 	{
 		W_LoadAmmo();
 		return;
@@ -1216,7 +1221,7 @@ void(float side) W_Fire =
 		self.speed_penalty_time = time + delay;
 	}
 
-	if (self.weapon == W_GUT || self.weapon == W_KAR_SCOPE || self.weapon == W_TRENCH || self.weapon == W_KAR || self.weapon == W_ARMAGEDDON || self.weapon == W_HEADCRACKER || self.weapon == W_SPRING || self.weapon == W_PULVERIZER)
+	if (WepDef_IsPumpShotgun(self.weapon) || WepDef_IsBoltAction(self.weapon))
 	{
 		Set_W_Frame (startframe, endframe, delay, 0, FIRE, W_LoadAmmo, modelname, FALSE, side, false);
 		self.NeedLoad = true;

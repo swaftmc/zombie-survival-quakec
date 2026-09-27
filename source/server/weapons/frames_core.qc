@@ -130,7 +130,9 @@ void () W_Frame_Update =
 		    self.weaponframe = self.weaponframe + 1;
         }
 
-		if (self.weaponmodel == "models/weapons/kar/v_kar.mdl" && (self.weapon == W_KAR_SCOPE ||  self.weapon == W_HEADCRACKER))
+		// The scope rides along with the animated viewmodel; asked against the base weapon so
+		// a rifle built on the scoped Kar carries its scope the same way.
+		if (self.weaponmodel == "models/weapons/kar/v_kar.mdl" && (WepDef_GetBaseWeapon(self.weapon) == W_KAR_SCOPE || WepDef_GetBaseWeapon(self.weapon) == W_HEADCRACKER))
 		{
 			self.weapon2model = "models/weapons/kar/v_karscope.mdl";
 			self.weapon2frame = self.weaponframe;
@@ -248,7 +250,7 @@ void Set_W_Frame (float startframe, float endframe, float duration, float funcca
 
 			if (model_should_hide_weapon2(set_model) == true) {
 				self.weapon2model = "";
-			} else if (self.weapon == W_KAR_SCOPE) {	
+			} else if (WepDef_GetBaseWeapon(self.weapon) == W_KAR_SCOPE) {	
 				self.weapon2model = "models/weapons/kar/v_karscope.mdl";
 			} else if (IsDualWeapon(self.weapon)) {	
 				self.weapon2model = GetLeftWeaponModel(self.weapon); 

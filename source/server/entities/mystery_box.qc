@@ -927,6 +927,12 @@ void(float mbox_file) MBOX_ParseMB2File =
             if (weapon_id == W_NOWEP)
                 error(strcat("MBOX_ParseMB2File: Not a weapon - ", file_line));
 
+            // The pool is a fixed array, so a list with more names than it has slots
+            // has to be refused here: writing past the last slot would land on the
+            // mystery box's own fields.
+            if (weapons_parsed >= MAX_BOX_WEAPONS)
+                error(strcat(strcat(strcat("MBOX_ParseMB2File: More weapons than the box holds (", ftos(MAX_BOX_WEAPONS)), ") - "), file_line));
+
             // Fill the list with it.
             mystery_box_weapons[weapons_parsed].weapon_id = weapon_id;
             mystery_box_weapons[weapons_parsed].allowed = is_allow_not_deny;

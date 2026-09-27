@@ -39,6 +39,19 @@ float(float weapon) WepDef_IsWonderWeapon;
 float(float weapon) WepDef_GetElement;
 string(float category) WepDef_GetCategoryName;
 
+// Weapon variants are new weapons built on shipped silhouettes. These answer "which
+// shipped weapon does this variant borrow, and how is it retuned"; declared here because
+// both the server roster and the client-side helpers below ask them.
+float(float weapon) WepDef_GetBaseWeapon;
+float(float weapon) WepDef_GetVariantMag;
+float(float weapon) WepDef_GetVariantAmmo;
+float(float weapon) WepDef_GetVariantFiretype;
+float(float weapon) WepDef_VariantDamageScale;
+float(float weapon) WepDef_VariantFireDelayScale;
+float(float weapon) WepDef_VariantSpreadScale;
+float(float weapon) WepDef_VariantRecoilScale;
+float(float weapon) WepDef_VariantWalkSpeedScale;
+
 #ifndef CSQC
 // The arsenal is a post-Second-World-War one: the standard kit is the Cold War issue
 // of the 1960s-80s, the modern tier is contemporary service weapons, and the wonder
@@ -228,6 +241,141 @@ string(float wep, float weapon_tier) GetWeaponName =
 		case W_PULVERIZER:
 			weapon_name = "Pulverizer";
 			break;
+
+		// Weapon variants: the shipped silhouettes, reissued. Their ids are appended, so
+		// every one of them sits below the original roster in this table.
+		case W_HIPOWER:
+			weapon_name = "Browning Hi-Power";
+			break;
+		case W_HIPOWERPAP:
+			weapon_name = "Hi-Power Mongoose";
+			break;
+		case W_MODEL70:
+			weapon_name = "Winchester Model 70";
+			break;
+		case W_MODEL70PAP:
+			weapon_name = "Model 70 Wraith";
+			break;
+		case W_MAGNUM44:
+			weapon_name = ".44 Magnum";
+			break;
+		case W_MAGNUM44PAP:
+			weapon_name = ".44 Anaconda";
+			break;
+		case W_COACHGUN:
+			weapon_name = "Coach Gun";
+			break;
+		case W_COACHGUNPAP:
+			weapon_name = "Stagecoach";
+			break;
+		case W_SLR:
+			weapon_name = "L1A1 SLR";
+			break;
+		case W_SLRPAP:
+			weapon_name = "SLR Impeller";
+			break;
+		case W_GALIL:
+			weapon_name = "Galil ARM";
+			break;
+		case W_GALILPAP:
+			weapon_name = "Galil Sabra";
+			break;
+		case W_PKM:
+			weapon_name = "PKM";
+			break;
+		case W_PKMPAP:
+			weapon_name = "PKM Accelerator";
+			break;
+		case W_VSS:
+			weapon_name = "VSS Vintorez";
+			break;
+		case W_VSSPAP:
+			weapon_name = "Vintorez Whisper";
+			break;
+		case W_M2CARBINE:
+			weapon_name = "M2 Carbine";
+			break;
+		case W_M2CARBINEPAP:
+			weapon_name = "M2 Nightfall";
+			break;
+		case W_MP5SD:
+			weapon_name = "MP5SD6";
+			break;
+		case W_MP5SDPAP:
+			weapon_name = "MP5SD Cinder";
+			break;
+		case W_CGM45:
+			weapon_name = "Carl Gustaf m/45";
+			break;
+		case W_CGM45PAP:
+			weapon_name = "m/45 Kulspruta";
+			break;
+		case W_PSG1:
+			weapon_name = "PSG-1";
+			break;
+		case W_PSG1PAP:
+			weapon_name = "PSG-1 Compressor";
+			break;
+		case W_MP5KPDW:
+			weapon_name = "MP5K-PDW";
+			break;
+		case W_MP5KPDWPAP:
+			weapon_name = "PDW Kollider";
+			break;
+		case W_M40A1:
+			weapon_name = "M40A1";
+			break;
+		case W_M40A1PAP:
+			weapon_name = "M40 Pulverizer";
+			break;
+		case W_MOSSBERG:
+			weapon_name = "Mossberg 590";
+			break;
+		case W_MOSSBERGPAP:
+			weapon_name = "Mossberg Gut Shot";
+			break;
+		case W_MG4:
+			weapon_name = "MG4";
+			break;
+		case W_MG4PAP:
+			weapon_name = "MG4 Barracuda";
+			break;
+		case W_VITYAZ:
+			weapon_name = "Vityaz-SN";
+			break;
+		case W_VITYAZPAP:
+			weapon_name = "Vityaz Reaper";
+			break;
+		case W_SMAW:
+			weapon_name = "SMAW";
+			break;
+		case W_SMAWPAP:
+			weapon_name = "SMAW Longinus";
+			break;
+		case W_AW50:
+			weapon_name = "AW50";
+			break;
+		case W_AW50PAP:
+			weapon_name = "AW50 Penetrator";
+			break;
+		case W_AKS74U:
+			weapon_name = "AKS-74U";
+			break;
+		case W_AKS74UPAP:
+			weapon_name = "AKS-74U Spatz";
+			break;
+		case W_F2W:
+			weapon_name = "F2W Cryo Projector";
+			break;
+		case W_F2WPAP:
+			weapon_name = "F2W Absolute Zero";
+			break;
+		case W_DG5:
+			weapon_name = "Wunderwaffe DG-5";
+			break;
+		case W_DG5PAP:
+			weapon_name = "DG-5 Dire Wolf";
+			break;
 		default:
 			break;
 	}
@@ -269,6 +417,14 @@ string(float wep, float weapon_tier) GetWeaponName =
 
 float(float wep) GetFiretype =
 {
+	// A variant can cycle differently from the weapon it was built on; everything else
+	// about the way it fires comes from that weapon.
+	float variant_firetype = WepDef_GetVariantFiretype(wep);
+
+	if (variant_firetype >= 0)
+		return variant_firetype;
+
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch (wep)
 	{
@@ -375,6 +531,8 @@ float(float wep) GetFiretype =
 float(float wep, float current_perks, float type) getWeaponMultiplier =
 {
 	float multiplier = 1;
+
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch (wep)
 	{
@@ -696,6 +854,13 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 
 float(float wep) getWeaponMag =
 {
+	// A variant's magazine is its own; everything else is the base weapon's.
+	float variant_mag = WepDef_GetVariantMag(wep);
+
+	if (variant_mag > 0)
+		return variant_mag;
+
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch (wep)
 	{
@@ -813,6 +978,9 @@ float(float wep) getWeaponMag =
 float(float wep) getWeaponAmmo =
 {
 	float weapon_ammo = 0;
+	float variant_ammo = WepDef_GetVariantAmmo(wep);
+
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch (wep)
 	{
@@ -978,6 +1146,11 @@ float(float wep) getWeaponAmmo =
 			break;
 	}
 
+	// The variant's own reserve replaces the base weapon's rather than scaling it: the
+	// tables below are what a weapon carries, not a multiplier on somebody else's kit.
+	if (variant_ammo > 0)
+		weapon_ammo = variant_ammo;
+
 #ifndef CSQC
 	weapon_ammo = Gamemode_GetWeaponAmmo(wep, weapon_ammo);
 #endif // CSQC
@@ -989,6 +1162,9 @@ float(float wep) getWeaponAmmo =
 float(float wep, float weapon_tier) getWeaponDamage =
 {
 	float weapon_damage = 0;
+	float variant_damage_scale = WepDef_VariantDamageScale(wep);
+
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch (wep)
 	{
@@ -1140,6 +1316,10 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			break;
     }
 
+	// The variant's trim moves the base weapon's damage, and the gamemode's own rules
+	// still apply on top of the result.
+	weapon_damage = floor(weapon_damage * variant_damage_scale);
+
 #ifndef CSQC
 	weapon_damage = Gamemode_GetWeaponDamage(weapon_damage, wep, weapon_tier);
 #endif // CSQC
@@ -1149,6 +1329,7 @@ float(float wep, float weapon_tier) getWeaponDamage =
 
 float(float wep) GetWeaponShotcount =
 {
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch(wep)
 	{
@@ -1170,6 +1351,8 @@ float(float wep) GetWeaponShotcount =
 
 float(float wep, float penetration_times) getWeaponPenetration =
 {
+	wep = WepDef_GetBaseWeapon(wep);
+
 	if (!penetration_times)
 		return 2;
 
@@ -1294,7 +1477,9 @@ float(float wep, float penetration_times) getWeaponPenetration =
     }
 }
 
-float(float wep, float delaytype) getWeaponDelay =
+// getWeaponDelayBase(wep, delaytype) is the shipped table. getWeaponDelay() wraps it so a
+// variant can retune its own rate of fire without a second copy of every delay.
+float(float wep, float delaytype) getWeaponDelayBase =
 {
 
 	switch (wep)
@@ -1708,6 +1893,20 @@ float(float wep, float delaytype) getWeaponDelay =
     return 0;
 }
 
+// getWeaponDelay(wep, delaytype)
+// The shipped delays, retuned for variants: a trim scales the fire cycle, so a heavier
+// weapon really does shoot more slowly and a lighter one more quickly. Everything else -
+// reload, take-out, put-away, melee - keeps the base weapon's timing.
+float(float wep, float delaytype) getWeaponDelay =
+{
+	float base_delay = getWeaponDelayBase(WepDef_GetBaseWeapon(wep), delaytype);
+
+	if (delaytype == FIRE)
+		base_delay = base_delay * WepDef_VariantFireDelayScale(wep);
+
+	return base_delay;
+}
+
 #define SPEED_MULTIPLIER_STANDARD 		1
 #define SPEED_MULTIPLIER_RIFLE 			0.88
 #define SPEED_MULTIPLIER_HEAVY 			0.75
@@ -1716,6 +1915,9 @@ float(float wep, float delaytype) getWeaponDelay =
 float GetWeaponWalkSpeed(float perks, float weapon)
 {
 	float speed_multiplier = 1;
+	float variant_walk_scale = WepDef_VariantWalkSpeedScale(weapon);
+
+	weapon = WepDef_GetBaseWeapon(weapon);
 
 	switch (weapon) {
 		case W_COLT:
@@ -1786,6 +1988,8 @@ float GetWeaponWalkSpeed(float perks, float weapon)
 			break;
 	}
 
+	speed_multiplier = speed_multiplier * variant_walk_scale;
+
 	if (perks & P_STAMIN)
 		speed_multiplier *= game_modifiers.gameplay.perksacola.perk_staminup_movement_speed_multiplier;
 
@@ -1802,6 +2006,7 @@ Weapon ADS Declarations
 // z: forward/back
 vector GetWeaponADSOfs(float wep) = 
 {
+	wep = WepDef_GetBaseWeapon(wep);
 		
 	switch(wep)
 	{
@@ -1890,6 +2095,8 @@ vector GetWeaponADSOfs(float wep) =
 
 float(float wep, float frametype, optional float z) GetFrame =
 {
+	wep = WepDef_GetBaseWeapon(wep);
+
 	switch (wep)
 	{
 		case W_COLT:
@@ -2873,6 +3080,9 @@ float(float wep, float frametype, optional float z) GetFrame =
 
 string(float wep, float gorvmodel) GetWeaponModel =
 {
+	// A variant is a shipped silhouette, so its model is the base weapon's: the whole
+	// point of the variant roster is that it needs no new art.
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch (wep)
 	{
@@ -3074,6 +3284,7 @@ string(float wep, float gorvmodel) GetWeaponModel =
 
 string(float weapon, float has_bowie_knife) GetWeapon2Model =
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
 
 	switch (weapon)
 	{
@@ -3105,6 +3316,7 @@ string(float weapon, float has_bowie_knife) GetWeapon2Model =
 
 string(float wep) GetWeaponSound =
 {
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch (wep)
 	{
@@ -3197,6 +3409,8 @@ string(float wep) GetWeaponSound =
 
 float(float wep) IsDualWeapon = {
 
+	wep = WepDef_GetBaseWeapon(wep);
+
 	switch(wep) {
 		case W_BIATCH:
 			return 1;
@@ -3208,6 +3422,8 @@ float(float wep) IsDualWeapon = {
 }
 
 string(float wep) GetLeftWeaponModel = {
+
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch(wep) {
 		case W_BIATCH:
@@ -3250,6 +3466,31 @@ float(float wep) IsPapWeapon = {
 		case W_PULVERIZER:
 		case W_FIW:
 		case W_KRAUS:
+
+		// Weapon variants carry their own id, so the upgraded half of every variant pair
+		// is listed here too - that is what gives it the Pack-a-Punch skin.
+		case W_HIPOWERPAP:
+		case W_MODEL70PAP:
+		case W_MAGNUM44PAP:
+		case W_COACHGUNPAP:
+		case W_SLRPAP:
+		case W_GALILPAP:
+		case W_PKMPAP:
+		case W_VSSPAP:
+		case W_M2CARBINEPAP:
+		case W_MP5SDPAP:
+		case W_CGM45PAP:
+		case W_PSG1PAP:
+		case W_MP5KPDWPAP:
+		case W_M40A1PAP:
+		case W_MOSSBERGPAP:
+		case W_MG4PAP:
+		case W_VITYAZPAP:
+		case W_SMAWPAP:
+		case W_AW50PAP:
+		case W_AKS74UPAP:
+		case W_F2WPAP:
+		case W_DG5PAP:
 			return 1;
 		default:
 			return 0;
@@ -3337,6 +3578,53 @@ float(float wep)  EqualNonPapWeapon =
 			return W_M2;
 		case W_KRAUS:
 			return W_BK;
+
+		// Weapon variants pair with their own Pack-a-Punch half, so every variant is
+		// upgradeable and no two variants can upgrade into the same weapon.
+		case W_HIPOWERPAP:
+			return W_HIPOWER;
+		case W_MODEL70PAP:
+			return W_MODEL70;
+		case W_MAGNUM44PAP:
+			return W_MAGNUM44;
+		case W_COACHGUNPAP:
+			return W_COACHGUN;
+		case W_SLRPAP:
+			return W_SLR;
+		case W_GALILPAP:
+			return W_GALIL;
+		case W_PKMPAP:
+			return W_PKM;
+		case W_VSSPAP:
+			return W_VSS;
+		case W_M2CARBINEPAP:
+			return W_M2CARBINE;
+		case W_MP5SDPAP:
+			return W_MP5SD;
+		case W_CGM45PAP:
+			return W_CGM45;
+		case W_PSG1PAP:
+			return W_PSG1;
+		case W_MP5KPDWPAP:
+			return W_MP5KPDW;
+		case W_M40A1PAP:
+			return W_M40A1;
+		case W_MOSSBERGPAP:
+			return W_MOSSBERG;
+		case W_MG4PAP:
+			return W_MG4;
+		case W_VITYAZPAP:
+			return W_VITYAZ;
+		case W_SMAWPAP:
+			return W_SMAW;
+		case W_AW50PAP:
+			return W_AW50;
+		case W_AKS74UPAP:
+			return W_AKS74U;
+		case W_F2WPAP:
+			return W_F2W;
+		case W_DG5PAP:
+			return W_DG5;
 		default:
 			return wep;
 	}
@@ -3401,15 +3689,432 @@ float(float wep)  EqualPapWeapon =
 			return W_FIW;
 		case W_BK:
 			return W_KRAUS;
+
+		// The other half of every variant pair. Both directions are one-to-one, which the
+		// unit tests assert: upgrading and then reading the base weapon has to return the
+		// variant the player was holding.
+		case W_HIPOWER:
+			return W_HIPOWERPAP;
+		case W_MODEL70:
+			return W_MODEL70PAP;
+		case W_MAGNUM44:
+			return W_MAGNUM44PAP;
+		case W_COACHGUN:
+			return W_COACHGUNPAP;
+		case W_SLR:
+			return W_SLRPAP;
+		case W_GALIL:
+			return W_GALILPAP;
+		case W_PKM:
+			return W_PKMPAP;
+		case W_VSS:
+			return W_VSSPAP;
+		case W_M2CARBINE:
+			return W_M2CARBINEPAP;
+		case W_MP5SD:
+			return W_MP5SDPAP;
+		case W_CGM45:
+			return W_CGM45PAP;
+		case W_PSG1:
+			return W_PSG1PAP;
+		case W_MP5KPDW:
+			return W_MP5KPDWPAP;
+		case W_M40A1:
+			return W_M40A1PAP;
+		case W_MOSSBERG:
+			return W_MOSSBERGPAP;
+		case W_MG4:
+			return W_MG4PAP;
+		case W_VITYAZ:
+			return W_VITYAZPAP;
+		case W_SMAW:
+			return W_SMAWPAP;
+		case W_AW50:
+			return W_AW50PAP;
+		case W_AKS74U:
+			return W_AKS74UPAP;
+		case W_F2W:
+			return W_F2WPAP;
+		case W_DG5:
+			return W_DG5PAP;
 		default:
 			return wep;
 	}
+}
+
+//
+// Weapon variants
+//
+// A variant is a new weapon built on one of the shipped ones: it keeps that weapon's
+// model, frames, sounds and handling, and changes a handful of headline numbers. This
+// block owns the loan - which shipped weapon, and in what trim - and the stats functions
+// in this file redirect through WepDef_GetBaseWeapon() and retune the result, so a new
+// weapon costs one row here plus a name, a category and a Pack-a-Punch partner rather
+// than another forty-case copy of every table in this file.
+//
+
+// The roster of variants is the base table below: the ids that answer with a weapon other
+// than themselves. Nothing lists them a second time, so there is no second place to keep
+// in step - appending a weapon means appending one row to that table.
+
+// Trims. A profile scales the base weapon's damage, rate of fire, spread, recoil and walk
+// speed by fixed factors, so a variant is the shipped weapon's balance moved in one clear
+// direction.
+#define WVAR_STANDARD		0 // as issued: only the magazine and the feed change
+#define WVAR_SUPPRESSED		1 // slower cycle, tighter, softer shooting
+#define WVAR_LIGHT			2 // lighter: faster cycle and footwork, wider spread
+#define WVAR_HEAVY			3 // heavier: harder hitting, slower, less steady
+#define WVAR_LONGBARREL		4 // longer barrel: more punch and reach
+#define WVAR_SHORTBARREL	5 // carbine trim: handier, wider spread
+#define WVAR_DRUM			6 // bulky feed: more rounds, more weight
+#define WVAR_MATCH			7 // match grade: deliberate, accurate, slower
+
+// The fields a profile answers for.
+#define WVARF_DAMAGE		0
+#define WVARF_FIREDELAY		1
+#define WVARF_SPREAD		2
+#define WVARF_RECOIL		3
+#define WVARF_WALK			4
+
+// WepDef_GetVariantProfile(weapon)
+// The trim a variant was reissued in. The Pack-a-Punch weapon carries the same one, so an
+// upgrade keeps the variant's character and only changes the numbers it was built from.
+float(float weapon) WepDef_GetVariantProfile =
+{
+	switch (weapon)
+	{
+		case W_HIPOWER:		case W_HIPOWERPAP:		return WVAR_DRUM;
+		case W_MODEL70:		case W_MODEL70PAP:		return WVAR_LONGBARREL;
+		case W_MAGNUM44:	case W_MAGNUM44PAP:		return WVAR_HEAVY;
+		case W_COACHGUN:	case W_COACHGUNPAP:		return WVAR_SHORTBARREL;
+		case W_SLR:			case W_SLRPAP:			return WVAR_MATCH;
+		case W_GALIL:		case W_GALILPAP:		return WVAR_DRUM;
+		case W_PKM:			case W_PKMPAP:			return WVAR_HEAVY;
+		case W_VSS:			case W_VSSPAP:			return WVAR_SUPPRESSED;
+		case W_M2CARBINE:	case W_M2CARBINEPAP:	return WVAR_DRUM;
+		case W_MP5SD:		case W_MP5SDPAP:		return WVAR_SUPPRESSED;
+		case W_CGM45:		case W_CGM45PAP:		return WVAR_DRUM;
+		case W_PSG1:			case W_PSG1PAP:			return WVAR_MATCH;
+		case W_MP5KPDW:		case W_MP5KPDWPAP:		return WVAR_STANDARD;
+		case W_M40A1:		case W_M40A1PAP:		return WVAR_MATCH;
+		case W_MOSSBERG:	case W_MOSSBERGPAP:		return WVAR_STANDARD;
+		case W_MG4:			case W_MG4PAP:			return WVAR_HEAVY;
+		case W_VITYAZ:		case W_VITYAZPAP:		return WVAR_DRUM;
+		case W_SMAW:			case W_SMAWPAP:			return WVAR_HEAVY;
+		case W_AW50:			case W_AW50PAP:			return WVAR_LONGBARREL;
+		case W_AKS74U:		case W_AKS74UPAP:		return WVAR_SHORTBARREL;
+		case W_F2W:			case W_F2WPAP:			return WVAR_STANDARD;
+		case W_DG5:			case W_DG5PAP:			return WVAR_HEAVY;
+	}
+
+	return WVAR_STANDARD;
+}
+
+// WepDef_GetProfileScale(profile, field)
+// One trim's retune factors. Every field a profile does not name is 1.
+float(float profile, float field) WepDef_GetProfileScale =
+{
+	switch (profile)
+	{
+		case WVAR_SUPPRESSED:
+			switch (field)
+			{
+				case WVARF_DAMAGE:		return 0.95;
+				case WVARF_FIREDELAY:	return 1.05;
+				case WVARF_SPREAD:		return 0.85;
+				case WVARF_RECOIL:		return 0.85;
+			}
+			break;
+		case WVAR_LIGHT:
+			switch (field)
+			{
+				case WVARF_DAMAGE:		return 0.90;
+				case WVARF_FIREDELAY:	return 0.90;
+				case WVARF_SPREAD:		return 1.15;
+				case WVARF_RECOIL:		return 0.80;
+				case WVARF_WALK:			return 1.08;
+			}
+			break;
+		case WVAR_HEAVY:
+			switch (field)
+			{
+				case WVARF_DAMAGE:		return 1.15;
+				case WVARF_FIREDELAY:	return 1.15;
+				case WVARF_SPREAD:		return 1.05;
+				case WVARF_RECOIL:		return 1.30;
+				case WVARF_WALK:			return 0.93;
+			}
+			break;
+		case WVAR_LONGBARREL:
+			switch (field)
+			{
+				case WVARF_DAMAGE:		return 1.08;
+				case WVARF_FIREDELAY:	return 1.12;
+				case WVARF_SPREAD:		return 0.80;
+				case WVARF_RECOIL:		return 1.05;
+				case WVARF_WALK:			return 0.97;
+			}
+			break;
+		case WVAR_SHORTBARREL:
+			switch (field)
+			{
+				case WVARF_DAMAGE:		return 0.92;
+				case WVARF_FIREDELAY:	return 0.92;
+				case WVARF_SPREAD:		return 1.20;
+				case WVARF_RECOIL:		return 1.10;
+				case WVARF_WALK:			return 1.05;
+			}
+			break;
+		case WVAR_DRUM:
+			switch (field)
+			{
+				case WVARF_FIREDELAY:	return 1.05;
+				case WVARF_SPREAD:		return 1.10;
+				case WVARF_RECOIL:		return 1.10;
+				case WVARF_WALK:			return 0.95;
+			}
+			break;
+		case WVAR_MATCH:
+			switch (field)
+			{
+				case WVARF_DAMAGE:		return 1.05;
+				case WVARF_FIREDELAY:	return 1.25;
+				case WVARF_SPREAD:		return 0.70;
+				case WVARF_RECOIL:		return 0.90;
+				case WVARF_WALK:			return 0.97;
+			}
+			break;
+	}
+
+	// WVAR_STANDARD, and anything a future trim forgets to name, changes nothing.
+	return 1;
+}
+
+// The five questions the stats functions ask: one field of the weapon's trim each, and 1
+// for every weapon that is not a variant.
+float(float weapon) WepDef_VariantDamageScale =
+{
+	return WepDef_GetProfileScale(WepDef_GetVariantProfile(weapon), WVARF_DAMAGE);
+}
+
+float(float weapon) WepDef_VariantFireDelayScale =
+{
+	return WepDef_GetProfileScale(WepDef_GetVariantProfile(weapon), WVARF_FIREDELAY);
+}
+
+float(float weapon) WepDef_VariantSpreadScale =
+{
+	return WepDef_GetProfileScale(WepDef_GetVariantProfile(weapon), WVARF_SPREAD);
+}
+
+float(float weapon) WepDef_VariantRecoilScale =
+{
+	return WepDef_GetProfileScale(WepDef_GetVariantProfile(weapon), WVARF_RECOIL);
+}
+
+float(float weapon) WepDef_VariantWalkSpeedScale =
+{
+	return WepDef_GetProfileScale(WepDef_GetVariantProfile(weapon), WVARF_WALK);
+}
+
+// WepDef_GetBaseWeapon(weapon)
+// The shipped weapon a variant borrows: its model, frames, sounds and tuning. Everything
+// that is not a variant answers with itself, which is what lets the stats functions
+// redirect unconditionally.
+float(float weapon) WepDef_GetBaseWeapon =
+{
+	switch (weapon)
+	{
+		case W_HIPOWER:		return W_COLT;
+		case W_MODEL70:		return W_KAR;
+		case W_MAGNUM44:		return W_357;
+		case W_COACHGUN:		return W_DB;
+		case W_SLR:			return W_FG;
+		case W_GALIL:			return W_BAR;
+		case W_PKM:			return W_BROWNING;
+		case W_VSS:			return W_KAR_SCOPE;
+		case W_M2CARBINE:		return W_M1A1;
+		case W_MP5SD:			return W_MP40;
+		case W_CGM45:			return W_TYPE;
+		case W_PSG1:			return W_GEWEHR;
+		case W_MP5KPDW:		return W_MP5K;
+		case W_M40A1:			return W_SPRING;
+		case W_MOSSBERG:		return W_TRENCH;
+		case W_MG4:			return W_MG;
+		case W_VITYAZ:			return W_PPSH;
+		case W_SMAW:			return W_PANZER;
+		case W_AW50:			return W_PTRS;
+		case W_AKS74U:		return W_STG;
+		case W_F2W:			return W_M2;
+		case W_DG5:			return W_TESLA;
+
+		// The Pack-a-Punch halves borrow the shipped Pack-a-Punch weapon, which is what
+		// gives them the upgraded skin, the doubled magazine and the heavier feel. The
+		// Hi-Power is the exception: its shipped partner, Cobra & Mongoose, is the akimbo
+		// grenade pistol, so the upgrade stays on the single M1911 that the variant is.
+		case W_HIPOWERPAP:		return W_COLT;
+		case W_MODEL70PAP:		return W_ARMAGEDDON;
+		case W_MAGNUM44PAP:		return W_KILLU;
+		case W_COACHGUNPAP:		return W_BORE;
+		case W_SLRPAP:			return W_IMPELLER;
+		case W_GALILPAP:			return W_WIDOW;
+		case W_PKMPAP:			return W_ACCELERATOR;
+		case W_VSSPAP:			return W_HEADCRACKER;
+		case W_M2CARBINEPAP:	return W_WIDDER;
+		case W_MP5SDPAP:		return W_AFTERBURNER;
+		case W_CGM45PAP:		return W_SAMURAI;
+		case W_PSG1PAP:			return W_COMPRESSOR;
+		case W_MP5KPDWPAP:		return W_KOLLIDER;
+		case W_M40A1PAP:		return W_PULVERIZER;
+		case W_MOSSBERGPAP:		return W_GUT;
+		case W_MG4PAP:			return W_BARRACUDA;
+		case W_VITYAZPAP:		return W_REAPER;
+		case W_SMAWPAP:			return W_LONGINUS;
+		case W_AW50PAP:			return W_PENETRATOR;
+		case W_AKS74UPAP:		return W_SPATZ;
+		case W_F2WPAP:			return W_FIW;
+		case W_DG5PAP:			return W_DG3;
+	}
+
+	return weapon;
+}
+
+// WepDef_GetVariantMag(weapon)
+// The magazine a variant carries, upgrade half included: 0 means "whatever the base weapon
+// carries", which is the answer for every weapon that is not a variant.
+float(float weapon) WepDef_GetVariantMag =
+{
+	switch (weapon)
+	{
+		case W_HIPOWER:		return 13;
+		case W_MODEL70:		return 5;
+		case W_MAGNUM44:		return 6;
+		case W_COACHGUN:		return 2;
+		case W_SLR:			return 20;
+		case W_GALIL:			return 35;
+		case W_PKM:			return 100;
+		case W_VSS:			return 10;
+		case W_M2CARBINE:		return 30;
+		case W_MP5SD:			return 30;
+		case W_CGM45:			return 36;
+		case W_PSG1:			return 20;
+		case W_MP5KPDW:		return 30;
+		case W_M40A1:			return 5;
+		case W_MOSSBERG:		return 8;
+		case W_MG4:			return 200;
+		case W_VITYAZ:			return 60;
+		case W_SMAW:			return 1;
+		case W_AW50:			return 5;
+		case W_AKS74U:		return 30;
+		case W_F2W:			return 300;
+		case W_DG5:			return 4;
+
+		case W_HIPOWERPAP:		return 26;
+		case W_MODEL70PAP:		return 8;
+		case W_MAGNUM44PAP:		return 6;
+		case W_COACHGUNPAP:		return 2;
+		case W_SLRPAP:			return 40;
+		case W_GALILPAP:			return 50;
+		case W_PKMPAP:			return 200;
+		case W_VSSPAP:			return 20;
+		case W_M2CARBINEPAP:	return 45;
+		case W_MP5SDPAP:		return 60;
+		case W_CGM45PAP:		return 72;
+		case W_PSG1PAP:			return 30;
+		case W_MP5KPDWPAP:		return 40;
+		case W_M40A1PAP:		return 10;
+		case W_MOSSBERGPAP:		return 12;
+		case W_MG4PAP:			return 250;
+		case W_VITYAZPAP:		return 120;
+		case W_SMAWPAP:			return 3;
+		case W_AW50PAP:			return 8;
+		case W_AKS74UPAP:		return 60;
+		case W_F2WPAP:			return 600;
+		case W_DG5PAP:			return 8;
+	}
+
+	return 0;
+}
+
+// WepDef_GetVariantAmmo(weapon)
+// The reserve a variant carries; 0 means "whatever the base weapon carries". A
+// flamethrower-shaped weapon has no reserve at all, so the cryo projector has no row here
+// and reads the 0 its base weapon carries.
+float(float weapon) WepDef_GetVariantAmmo =
+{
+	switch (weapon)
+	{
+		case W_HIPOWER:		return 104;
+		case W_MODEL70:		return 40;
+		case W_MAGNUM44:		return 60;
+		case W_COACHGUN:		return 48;
+		case W_SLR:			return 160;
+		case W_GALIL:			return 245;
+		case W_PKM:			return 400;
+		case W_VSS:			return 60;
+		case W_M2CARBINE:		return 180;
+		case W_MP5SD:			return 160;
+		case W_CGM45:			return 216;
+		case W_PSG1:			return 100;
+		case W_MP5KPDW:		return 150;
+		case W_M40A1:			return 45;
+		case W_MOSSBERG:		return 72;
+		case W_MG4:			return 600;
+		case W_VITYAZ:			return 300;
+		case W_SMAW:			return 12;
+		case W_AW50:			return 50;
+		case W_AKS74U:		return 150;
+		case W_DG5:			return 20;
+
+		case W_HIPOWERPAP:		return 156;
+		case W_MODEL70PAP:		return 48;
+		case W_MAGNUM44PAP:		return 60;
+		case W_COACHGUNPAP:		return 72;
+		case W_SLRPAP:			return 240;
+		case W_GALILPAP:			return 300;
+		case W_PKMPAP:			return 800;
+		case W_VSSPAP:			return 120;
+		case W_M2CARBINEPAP:	return 270;
+		case W_MP5SDPAP:		return 280;
+		case W_CGM45PAP:		return 320;
+		case W_PSG1PAP:			return 150;
+		case W_MP5KPDWPAP:		return 240;
+		case W_M40A1PAP:		return 70;
+		case W_MOSSBERGPAP:		return 96;
+		case W_MG4PAP:			return 900;
+		case W_VITYAZPAP:		return 600;
+		case W_SMAWPAP:			return 30;
+		case W_AW50PAP:			return 72;
+		case W_AKS74UPAP:		return 300;
+		case W_DG5PAP:			return 40;
+	}
+
+	return 0;
+}
+
+// WepDef_GetVariantFiretype(weapon)
+// A variant that cycles differently from its base says so here; -1 means "asks the base
+// weapon", which is the answer for every weapon that is not a variant.
+float(float weapon) WepDef_GetVariantFiretype =
+{
+	switch (weapon)
+	{
+		case W_SLR:			case W_SLRPAP:			return FIRETYPE_SEMIAUTO;
+		case W_M2CARBINE:	case W_M2CARBINEPAP:	return FIRETYPE_FULLAUTO;
+		case W_AW50:			case W_AW50PAP:			return FIRETYPE_SEMIAUTO;
+	}
+
+	return -1;
 }
 
 #ifndef CSQC
 
 float(float wep, float anim_style, float dualwep, float curweaponframe)	PlayWeaponSound =
 {
+	// A variant plays the base weapon's own audio, so reload and cycle sounds follow the
+	// silhouette it was built on.
+	wep = WepDef_GetBaseWeapon(wep);
+
 	if (anim_style == KNIFE && wep != W_BK && wep != W_KRAUS) {
 		if (curweaponframe == 6) {
 			self.punchangle_x = -2;
@@ -3882,6 +4587,8 @@ float(float wep, float anim_style, float dualwep, float curweaponframe)	PlayWeap
 
 void(float weptype) precache_extra =
 {
+	// Variants reuse the base weapon's models and sounds, so this precaches that set.
+	weptype = WepDef_GetBaseWeapon(weptype);
 
 	switch (weptype) {
 		case W_COLT:
@@ -4118,6 +4825,7 @@ void(float weptype) precache_extra =
 
 float(float wep) getWeaponRecoilReturn =
 {
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch (wep)
 	{
@@ -4232,6 +4940,9 @@ float(float wep) getWeaponRecoilReturn =
 float(float weapon, float stance) CrossHairWeapon =
 {
 	float crosshair_spread = 0;
+	float variant_spread_scale = WepDef_VariantSpreadScale(weapon);
+
+	weapon = WepDef_GetBaseWeapon(weapon);
 
 	switch(weapon)
 	{
@@ -4311,6 +5022,9 @@ float(float weapon, float stance) CrossHairWeapon =
 			break;
 	}
 
+	// A variant's trim widens or tightens the cone of the weapon it was built on.
+	crosshair_spread = crosshair_spread * variant_spread_scale;
+
 	// early out
 	if (crosshair_spread == 0)
 		return crosshair_spread;
@@ -4332,6 +5046,9 @@ float(float weapon, float stance) CrossHairWeapon =
 float(float weapon, float stance) CrossHairMaxSpread =
 {
 	float crosshair_spread = 0;
+	float variant_spread_scale = WepDef_VariantSpreadScale(weapon);
+
+	weapon = WepDef_GetBaseWeapon(weapon);
 
 	switch(weapon)
 	{
@@ -4405,6 +5122,9 @@ float(float weapon, float stance) CrossHairMaxSpread =
 			break;
 	}
 
+	// A variant's trim widens or tightens the cone of the weapon it was built on.
+	crosshair_spread = crosshair_spread * variant_spread_scale;
+
 	// early out
 	if (crosshair_spread == 0)
 		return crosshair_spread;
@@ -4425,6 +5145,8 @@ float(float weapon, float stance) CrossHairMaxSpread =
 
 float(float wep) W_HighPrecisionWhenADS =
 {
+	wep = WepDef_GetBaseWeapon(wep);
+
 	switch (wep) {
 		case W_KAR:
 		case W_ARMAGEDDON:
@@ -4442,6 +5164,8 @@ float(float wep) W_HighPrecisionWhenADS =
 
 float(float wep) W_SpreadAffectedByADS =
 {
+	wep = WepDef_GetBaseWeapon(wep);
+
 	switch (wep) {
 		case W_SAWNOFF:
 		case W_SNUFF:
@@ -4489,6 +5213,10 @@ vector(float wep) GetWeaponRecoil =
 	vector kick_change = '0 0 0';
 	vector final_kick = '0 0 0';
 	float change_1, change_2, change_3,total_recoil, r, temp1, temp2;
+	float variant_recoil_scale = WepDef_VariantRecoilScale(wep);
+
+	wep = WepDef_GetBaseWeapon(wep);
+
 	switch (wep)
 	{
 		case W_COLT:
@@ -4673,9 +5401,9 @@ vector(float wep) GetWeaponRecoil =
 	final_kick_x = final_kick_x - guaranteed_y;
 	final_kick_y = final_kick_y - guaranteed_z;
 
-	final_kick_x = final_kick_x / 10;
-	final_kick_y = final_kick_y / 10;
-	final_kick_z = final_kick_z / 10;
+	final_kick_x = (final_kick_x / 10) * variant_recoil_scale;
+	final_kick_y = (final_kick_y / 10) * variant_recoil_scale;
+	final_kick_z = (final_kick_z / 10) * variant_recoil_scale;
 	//bprint	(vtos(final_kick));
 	//bprint	("\n");
 	return final_kick;
@@ -4687,6 +5415,8 @@ vector(float wep) GetWeaponRecoil =
 // in QC.
 vector (float wep) GetWeaponFlash_Offset = 
 {
+		wep = WepDef_GetBaseWeapon(wep);
+
 		switch(wep) {
 			case W_COLT:
 				return [5488, -2742, 35300];
@@ -4768,6 +5498,8 @@ vector (float wep) GetWeaponFlash_Offset =
 }
 
 float (float wep) GetWeaponFlash_Size = {
+
+	wep = WepDef_GetBaseWeapon(wep);
 
 	switch(wep) {
 		case W_COLT:
@@ -4851,6 +5583,8 @@ float (float wep) GetWeaponFlash_Size = {
 // Returns the amount needed to zoom in a weapon. In near-fov "units".
 float(float wep) GetWeaponZoomAmount =
 {
+	wep = WepDef_GetBaseWeapon(wep);
+
 	switch(wep) {
 		case W_COLT:
             return 10;
@@ -4933,6 +5667,8 @@ float(float wep) GetWeaponZoomAmount =
 //
 float(float weapon) WepDef_HasSniperScore =
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
+
 	switch(weapon) {
 		case W_KAR_SCOPE:
 		case W_HEADCRACKER:
@@ -5022,6 +5758,8 @@ float(float weapon, float has_bowie) WepDef_CalculateMeleeDamage =
 //
 float(float weapon) WepDef_DoesNotADS =
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
+
 	switch(weapon) {
 		case W_TESLA:
 		case W_DG3:
@@ -5030,6 +5768,40 @@ float(float weapon) WepDef_DoesNotADS =
 			return true;
 		default:
 			return false;
+	}
+
+	return false;
+}
+
+//
+// WepDef_IsPumpShotgun(weapon) / WepDef_IsBoltAction(weapon)
+// The weapons that work their action by hand between shots. Their reload and fire paths
+// are special-cased in weapon_core.qc, so they are asked about as a family: a variant of
+// one of them has to work its action the way its donor does.
+//
+float(float weapon) WepDef_IsPumpShotgun =
+{
+	switch (WepDef_GetBaseWeapon(weapon))
+	{
+		case W_TRENCH:
+		case W_GUT:
+			return true;
+	}
+
+	return false;
+}
+
+float(float weapon) WepDef_IsBoltAction =
+{
+	switch (WepDef_GetBaseWeapon(weapon))
+	{
+		case W_KAR:
+		case W_ARMAGEDDON:
+		case W_KAR_SCOPE:
+		case W_HEADCRACKER:
+		case W_SPRING:
+		case W_PULVERIZER:
+			return true;
 	}
 
 	return false;
@@ -5212,6 +5984,8 @@ float(float weapon, float did_lunge, float has_bowie) WepDef_GetMeleeAnimDuratio
 //
 float(float weapon) WepDef_DoesNotPlayUpgradedSound =
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
+
 	switch(weapon) {
 		case W_DG3:
 		case W_PORTER:
@@ -5232,6 +6006,8 @@ float(float weapon) WepDef_DoesNotPlayUpgradedSound =
 //
 float(float weapon) WepDef_OnlyOneAllowed =
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
+
 	switch(weapon) {
 		case W_TESLA:
 		case W_DG3:
@@ -5290,6 +6066,32 @@ float(string weapon) WepDef_GetWeaponIDFromName =
 		case "mp5k": return W_MP5K;
 		case "springfield": return W_SPRING;
 		case "ray_gun_2": return W_RAYMK2;
+
+		// Weapon variants, named the way the shipped roster is named: this is how a map's
+		// .mb2 file puts one in the Mystery Box. Only the stock weapons appear here - the
+		// Box hands out stock guns, and an upgraded half is reached by upgrading its partner.
+		case "hi_power": return W_HIPOWER;
+		case "model_70": return W_MODEL70;
+		case "magnum_44": return W_MAGNUM44;
+		case "coach_gun": return W_COACHGUN;
+		case "l1a1_slr": return W_SLR;
+		case "galil_arm": return W_GALIL;
+		case "pkm": return W_PKM;
+		case "vss_vintorez": return W_VSS;
+		case "m2_carbine": return W_M2CARBINE;
+		case "mp5sd6": return W_MP5SD;
+		case "cgm45": return W_CGM45;
+		case "psg1": return W_PSG1;
+		case "mp5k_pdw": return W_MP5KPDW;
+		case "m40a1": return W_M40A1;
+		case "mossberg_590": return W_MOSSBERG;
+		case "mg4": return W_MG4;
+		case "vityaz_sn": return W_VITYAZ;
+		case "smaw": return W_SMAW;
+		case "aw50": return W_AW50;
+		case "aks74u": return W_AKS74U;
+		case "f2w_cryo_projector": return W_F2W;
+		case "wunderwaffe_dg5": return W_DG5;
 		default: return W_NOWEP;
 	}
 	return W_COLT;
@@ -5302,6 +6104,8 @@ float(string weapon) WepDef_GetWeaponIDFromName =
 //
 float WepDef_WeaponCanGibEnemy(float weapon)
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
+
 	switch(weapon) {
 		case W_COLT: return 0;
 		case W_357: return 0;
@@ -5324,6 +6128,8 @@ float WepDef_WeaponCanGibEnemy(float weapon)
 //
 float WepDef_GetWeaponCrosshairType(float weapon)
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
+
 	switch(weapon) {
 		case W_M2:
 		case W_FIW:
@@ -5349,6 +6155,8 @@ float WepDef_GetWeaponCrosshairType(float weapon)
 //
 vector(float weapon) WepDef_GetLeftFlashOffset =
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
+
     switch(weapon) {
         case W_BIATCH:
             return [-8639, -3621, 39337];
@@ -5366,6 +6174,8 @@ vector(float weapon) WepDef_GetLeftFlashOffset =
 //
 float(float weapon) WepDef_WeaponSecondaryModelIsAttachment =
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
+
 	switch(weapon) {
 		case W_KAR_SCOPE:
 		case W_HEADCRACKER:
@@ -5400,6 +6210,8 @@ float(float weapon) WepDef_WeaponModelIsUnlit =
 //
 float(float weapon) WepDef_Weapon2ModelIsUnlit =
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
+
 	switch(weapon) {
 		case W_RAYMK2:
 		case W_PORTERMK2:
@@ -5418,6 +6230,8 @@ float(float weapon) WepDef_Weapon2ModelIsUnlit =
 //
 float(float weapon) WepDef_GetWeaponBurstCount =
 {
+	weapon = WepDef_GetBaseWeapon(weapon);
+
 	switch(weapon) {
 		case W_RAYMK2:
 		case W_PORTERMK2:

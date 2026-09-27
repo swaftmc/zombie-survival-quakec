@@ -245,6 +245,63 @@ float 	map_compatibility_mode;
 #define W_CUSTOM3	   72
 #define W_CUSTOM4	   73
 
+// Weapon variants. Every one of these is a shipped silhouette in different trim: the
+// comment names the model it borrows, and shared/weapon_stats.qc resolves the loan
+// through WepDef_GetBaseWeapon(). Ids are appended - never renumbered - because compiled
+// maps carry them: 62-69 and 74 onward were free, 70-73 stay the custom slots.
+#define W_HIPOWER		62 // m1911
+#define W_MODEL70		63 // kar
+#define W_MAGNUM44		64 // 357
+#define W_COACHGUN		65 // db
+#define W_SLR			66 // fg42
+#define W_GALIL			67 // bar
+#define W_PKM			68 // browning
+#define W_VSS			69 // kars
+#define W_M2CARBINE		74 // m1carbine
+#define W_MP5SD			75 // mp40
+#define W_CGM45			76 // type
+#define W_PSG1			77 // gewehr
+#define W_MP5KPDW		78 // mp5k
+#define W_M40A1			79 // spring
+#define W_MOSSBERG		80 // trench
+#define W_MG4			81 // mg
+#define W_VITYAZ		82 // ppsh
+#define W_SMAW			83 // panzer
+#define W_AW50			84 // ptrs
+#define W_AKS74U		85 // stg
+#define W_F2W			86 // m2flame (cryo)
+#define W_DG5			87 // tesla
+
+// Pack-a-Punch counterparts, in the order of the variants above. They borrow the
+// upgraded model (the one the shipped weapon's own Pack-a-Punch weapon uses), which is
+// what gives them the upgraded skin and the bigger magazines.
+#define W_HIPOWERPAP	88
+#define W_MODEL70PAP	89
+#define W_MAGNUM44PAP	90
+#define W_COACHGUNPAP	91
+#define W_SLRPAP		92
+#define W_GALILPAP		93
+#define W_PKMPAP		94
+#define W_VSSPAP		95
+#define W_M2CARBINEPAP	96
+#define W_MP5SDPAP		97
+#define W_CGM45PAP		98
+#define W_PSG1PAP		99
+#define W_MP5KPDWPAP		100
+#define W_M40A1PAP		101
+#define W_MOSSBERGPAP	102
+#define W_MG4PAP		103
+#define W_VITYAZPAP		104
+#define W_SMAWPAP		105
+#define W_AW50PAP		106
+#define W_AKS74UPAP		107
+#define W_F2WPAP		108
+#define W_DG5PAP		109
+
+// The highest weapon id in use. Appending a weapon moves this marker with it; anything
+// that samples the id space (Gun Game's weapon list) asks this instead of a literal.
+#define W_MAX			W_DG5PAP
+
 // Weapon categories. Every weapon belongs to exactly one; the era tiers cover the
 // standard arsenal (the Cold War issue kit, contemporary service weapons and
 // near-future prototypes) and the WONDER_* tiers are the elemental wonder-weapon

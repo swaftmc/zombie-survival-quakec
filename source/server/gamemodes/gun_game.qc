@@ -49,9 +49,14 @@ float(float weapon_id, float current_index) Gamemode_GunGame_WeaponIDIsValid =
         weapon_id == W_BETTY || weapon_id == W_BOWIE ||
         weapon_id == W_RESERVED || weapon_id == W_RESERVED2)
         return false;
+
+    // Nor the custom slots, which no roster weapon is assigned to.
+    if (weapon_id >= W_CUSTOM1 && weapon_id <= W_CUSTOM4)
+        return false;
     
-    // Also NO FLAMETHROWER
-    if (weapon_id == W_M2)
+    // Also NO FLAMETHROWER, and nothing built on its silhouette: asked against the base
+    // weapon so the cryo projector is excluded with the weapon it shares a shape with.
+    if (WepDef_GetBaseWeapon(weapon_id) == W_M2)
         return false;
 
     // Prevent duplicates if the weapon appeared in the previous 2 slots
@@ -76,7 +81,9 @@ void() Gamemode_GunGame_GenerateWeaponList =
         float found_eligible_weapon = false;
 
         while (!found_eligible_weapon) {
-            float weapon_id = rint(random() * 59);
+            // Sample the whole id space, not just the original 62 ids: W_MAX follows the
+            // roster, so an appended weapon can join the rotation the moment it is defined.
+            float weapon_id = rint(random() * W_MAX);
             float final_id = EqualNonPapWeapon(weapon_id);
 
             if (Gamemode_GunGame_WeaponIDIsValid(final_id, i)) {
