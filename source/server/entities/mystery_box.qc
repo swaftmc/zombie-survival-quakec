@@ -987,16 +987,12 @@ void() MBOX_LoadData =
         return;
     }
 
-    // Attempt 3: Include All Weapons
+    // Attempt 3: Include All Weapons - a deny list that names nothing, so the
+    // Mark II stays out here by the same rule the file parsers use.
     for (float i = 0; i < MAX_BOX_WEAPONS; i++) {
         mystery_box_weapons[i].weapon_id = MBOX_GetWeaponIDFromMB1(i);
-        mystery_box_weapons[i].allowed = true;
+        mystery_box_weapons[i].allowed = MBOX_WeaponAllowedByDefault(false, mystery_box_weapons[i].weapon_id);
         mystery_box_weapons[i].rarity = -1;
-
-		// .. except the Mk II
-		if (mystery_box_weapons[i].weapon_id == W_RAYMK2) {
-			mystery_box_weapons[i].allowed = false;
-		}
     }
 
     // Precache it all.

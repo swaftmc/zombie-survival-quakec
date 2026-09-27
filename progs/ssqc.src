@@ -75,6 +75,7 @@ fte_builtins.qc
 json.qc
 map_rotation.qc
 utilities/sound_helper.qc
+weapon_categories.qc
 weapon_stats.qc
 utilities/math.qc
 clientfuncs.qc
@@ -118,6 +119,7 @@ weapons/flamethrower.qc
 weapons/grenade_launcher.qc
 weapons/bouncing_betty.qc
 weapons/weapon_core.qc
+weapons/weapon_elements.qc
 entities/powerups.qc
 #ifdef FTE
 ai/pathfind_code.qc

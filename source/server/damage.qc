@@ -31,9 +31,7 @@ void() Gamemode_GetUp;
 void(entity attacker, float death_style) Gamemode_DieHandler;
 float(float current_earned_score, float damage_style) Gamemode_ScoreForDamage;
 float(float current_health_delay, float current_perks) Gamemode_GetHealthRegenDelayForPlayer;
-float(float weapon) WepDef_GetElement;
-void(entity inflictor, entity attacker, float damage2, float mindamage, float radius) DamgageExplode;
-void(vector org) CallExplosion;
+void(entity victim, entity attacker, float damage) WeaponElement_Apply;
 
 #define DMG_SCORE_HEADSHOT		100 	// Death by Headshot
 #define DMG_SCORE_MELEE			130		// Death by Melee
@@ -369,51 +367,6 @@ void(entity attacker, float d_style) DieHandler =
     }
 }
 
-// --------------------------------------------------------------------------------------
-// Weapon elements
-//
-// What a wonder weapon leaves behind is decided by its category (see weapon_stats): a
-// shock hit arcs a short way through the crowd, an incendiary hit sets the victim alight
-// through the flamethrower's existing burning state, a cryo hit chills it, and a heavy
-// payload detonates where it lands. Arsenal weapons carry WELEM_NONE and never get here.
-// --------------------------------------------------------------------------------------
-float weapon_element_suppressed;	// set while element-generated damage is applied (0 by default)
-
-void(entity victim, entity attacker, float damage, float d_style) WeaponElement_Apply =
-{
-	if (weapon_element_suppressed || attacker == world || attacker.weapon == 0)
-		return;
-
-	float element = WepDef_GetElement(attacker.weapon);
-
-	if (element == WELEM_NONE || damage <= 0)
-		return;
-
-	weapon_element_suppressed = true;
-
-	if (element == WELEM_FIRE) {
-		// hand the target to the flamethrower's own burning state: Zombie_Think ticks it
-		victim.onfire = true;
-		victim.firer = attacker;
-		victim.fire_timeout = time + 4;
-	}
-	else if (element == WELEM_CRYO) {
-		victim.speed_penalty = 0.55;
-		victim.speed_penalty_time = time + 3;
-	}
-	else if (element == WELEM_SHOCK) {
-		// chain: a shorter, weaker arc to whatever is standing beside the target
-		DamgageExplode(victim, attacker, damage * 0.5, 1, 120);
-	}
-	else if (element == WELEM_HEAVY) {
-		// detonate: a wider blast, weaker than the round itself
-		DamgageExplode(victim, attacker, damage * 0.6, 1, 200);
-		CallExplosion(victim.origin);
-	}
-
-	weapon_element_suppressed = false;
-};
-
 void(entity victim, entity attacker, float damage, float d_style) DamageHandler = {
 	if (cvar("sv_headshotonly") == 1 && d_style != DMG_TYPE_HEADSHOT && victim.classname == "ai_zombie")
 		return;
@@ -444,8 +397,9 @@ void(entity victim, entity attacker, float damage, float d_style) DamageHandler 
 
 		victim.health = victim.health - damage;
 
-		// wonder weapons leave their element on whatever they hit
-		WeaponElement_Apply(victim, attacker, damage, d_style);
+		// wonder weapons leave their element on whatever they hit; the category table and
+		// every effect live in server/weapons/weapon_elements.qc
+		WeaponElement_Apply(victim, attacker, damage);
 
 		if (d_style == DMG_TYPE_EXPLOSIVE && damage != 0) {
 			if (victim.health > 0 && victim.crawling == 2) {

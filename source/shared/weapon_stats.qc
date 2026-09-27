@@ -30,11 +30,14 @@ float(float damage, float weapon_id, float weapon_tier) Gamemode_GetWeaponDamage
 float(float current_melee_damage, float weapon, float has_bowie) Gamemode_CalculateMeleeDamage;
 float(float current_multiplier, float current_perks, float weapon, float location) Gamemode_GetWeaponLimbMultiplier;
 float(float wep) EqualPapWeapon;
+#endif
+
+// Category questions are answered by shared/weapon_categories.qc; declared here because
+// both the server-side roster and the client-side helpers below ask them.
 float(float weapon) WepDef_GetCategory;
 float(float weapon) WepDef_IsWonderWeapon;
 float(float weapon) WepDef_GetElement;
 string(float category) WepDef_GetCategoryName;
-#endif
 
 #ifndef CSQC
 // The arsenal is a post-Second-World-War one: the standard kit is the Cold War issue
@@ -261,118 +264,8 @@ string(float wep, float weapon_tier) GetWeaponName =
 }
 #endif
 
-// --------------------------------------------------------------------------------------
-// Weapon categories
-//
-// One table decides what every weapon is: which era of the arsenal it belongs to, or
-// which elemental wonder-weapon family it heads. Everything else in the game asks this
-// table (mystery box rules, element behaviour, menus) instead of keeping its own list of
-// ids, so adding a wonder weapon means adding one case here.
-// --------------------------------------------------------------------------------------
-float(float weapon) WepDef_GetCategory =
-{
-	switch (weapon)
-	{
-		// --- ray family: aetheric damage ---
-		case W_RAY:
-		case W_PORTER:
-		case W_RAYMK2:
-		case W_PORTERMK2:
-			return WCAT_WONDER_AETHER;
-
-		// --- tesla family: arcs between targets ---
-		case W_TESLA:
-		case W_DG3:
-			return WCAT_WONDER_SHOCK;
-
-		// --- incendiary: leaves the target burning ---
-		case W_M2:
-		case W_AFTERBURNER:
-			return WCAT_WONDER_FIRE;
-
-		// --- cryo: slows and brittles ---
-		case W_FIW:
-			return WCAT_WONDER_CRYO;
-
-		// --- heavy: explosive payloads ---
-		case W_PULVERIZER:
-		case W_LONGINUS:
-		case W_PENETRATOR:
-			return WCAT_WONDER_HEAVY;
-
-		// --- melee and equipment ---
-		case W_BK:
-		case W_KRAUS:
-		case W_BOWIE:
-			return WCAT_MELEE;
-		case W_GRENADE:
-		case W_BETTY:
-			return WCAT_EQUIPMENT;
-
-		// --- contemporary service weapons ---
-		case W_MP5K:
-		case W_KOLLIDER:
-		case W_PPSH:
-		case W_REAPER:
-		case W_PTRS:
-			return WCAT_MODERN;
-
-		default:
-			return WCAT_RETRO;
-	}
-
-	return WCAT_RETRO;
-}
-
-// WepDef_IsWonderWeapon(weapon)
-// True for every category that behaves like a wonder weapon, i.e. the elemental
-// families - not "has a special model" or "came out of the box".
-float(float weapon) WepDef_IsWonderWeapon =
-{
-	float category = WepDef_GetCategory(weapon);
-	return (category >= WCAT_WONDER_AETHER) && (category <= WCAT_WONDER_HEAVY);
-}
-
-// WepDef_GetElement(weapon)
-// The on-hit element implied by the weapon's category. WELEM_NONE for everything that
-// is not a wonder weapon, so an ordinary gun can never set a zombie alight.
-float(float weapon) WepDef_GetElement =
-{
-	switch (WepDef_GetCategory(weapon))
-	{
-		case WCAT_WONDER_AETHER: return WELEM_AETHER;
-		case WCAT_WONDER_SHOCK:  return WELEM_SHOCK;
-		case WCAT_WONDER_FIRE:   return WELEM_FIRE;
-		case WCAT_WONDER_CRYO:   return WELEM_CRYO;
-		case WCAT_WONDER_HEAVY:  return WELEM_HEAVY;
-		default: return WELEM_NONE;
-	}
-
-	return WELEM_NONE;
-}
-
-// WepDef_GetCategoryName(category)
-// Display label for menus and the HUD, so the categories are visible to the player.
-// Categories are read by the client too: the HUD and the menus show them.
-string(float category) WepDef_GetCategoryName =
-{
-	switch (category)
-	{
-		case WCAT_RETRO:         return "Cold War";
-		case WCAT_MODERN:        return "Modern";
-		case WCAT_PROTOTYPE:     return "Prototype";
-		case WCAT_WONDER_AETHER: return "Aether";
-		case WCAT_WONDER_SHOCK:  return "Shock";
-		case WCAT_WONDER_FIRE:   return "Incendiary";
-		case WCAT_WONDER_CRYO:   return "Cryo";
-		case WCAT_WONDER_HEAVY:  return "Heavy";
-		case WCAT_MELEE:         return "Melee";
-		case WCAT_EQUIPMENT:     return "Equipment";
-		default: return "Unknown";
-	}
-
-	return "Unknown";
-}
+// What a weapon is, which element it carries and what its family is called all come from
+// shared/weapon_categories.qc; this file owns only the roster - names, stats and frames.
 
 float(float wep) GetFiretype =
 {

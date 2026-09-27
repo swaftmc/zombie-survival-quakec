@@ -182,8 +182,8 @@ void(entity client) LastStand_AssignWeapon =
 			}
 		}
 
-		// Ray Gun has a special case where we DON'T fill its reserve
-		if (self.weapon != W_RAY && self.weapon != W_PORTER) {
+		// Aether weapons have a special case where we DON'T fill their reserve
+		if (!WepDef_IsRayGun(self.weapon)) {
 			// Now see if the reserve ammo is more than max downed capacity
 			if (total_ammo > getWeaponMag(self.weapon)*2) {
 				self.weapons[0].weapon_reserve = getWeaponMag(self.weapon)*2;

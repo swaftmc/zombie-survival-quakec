@@ -1291,7 +1291,9 @@ void() HUD_WeaponString =
 			break;
 	}
 
-	if (EqualNonPapWeapon(getstatf(STAT_ACTIVEWEAPON)) == W_RAY || EqualNonPapWeapon(getstatf(STAT_ACTIVEWEAPON)) == W_TESLA || EqualNonPapWeapon(getstatf(STAT_ACTIVEWEAPON)) == W_RAYMK2)
+	// Wonder weapons get their own colour; which weapons those are is the
+	// category table's business, not the HUD's.
+	if (WepDef_IsWonderWeapon(EqualNonPapWeapon(getstatf(STAT_ACTIVEWEAPON))))
 		weapon_name_color = TEXT_YELLOW;
 
 	// If the string matches our last store, bail out.

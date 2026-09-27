@@ -24,6 +24,7 @@ menu_bind.qc     // Bindings Menu
 menu_aces.qc     // Accessibility Menu
 
 sound_enhanced.qc
+weapon_categories.qc
 weapon_stats.qc
 defs/custom.qc
 achievements.qc
