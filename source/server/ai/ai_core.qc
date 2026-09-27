@@ -807,6 +807,17 @@ void(float dist) Zombie_Walk =  {
 		dist *= 21 / 13;
 	dist = Gamemode_GetAIWalkSpeed(dist, self.classname);
 
+	// Cryo: a chilled zombie walks at a fraction of its speed until the timer runs out.
+	// speed_penalty is 0 on everything that has never been hit by an element, so this
+	// cannot slow a zombie that was not frozen. Crawlers already scale their own walk
+	// speed by speed_penalty, so they are left alone here.
+	if (self.speed_penalty > 0 && !self.crawling) {
+		if (self.speed_penalty_time > time)
+			dist *= self.speed_penalty;
+		else
+			self.speed_penalty = 0;
+	}
+
 	//Resetting velocity from last frame (except for vertical)
 	self.velocity_x = 0;
 	self.velocity_y = 0;

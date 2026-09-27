@@ -30,9 +30,18 @@ float(float damage, float weapon_id, float weapon_tier) Gamemode_GetWeaponDamage
 float(float current_melee_damage, float weapon, float has_bowie) Gamemode_CalculateMeleeDamage;
 float(float current_multiplier, float current_perks, float weapon, float location) Gamemode_GetWeaponLimbMultiplier;
 float(float wep) EqualPapWeapon;
+float(float weapon) WepDef_GetCategory;
+float(float weapon) WepDef_IsWonderWeapon;
+float(float weapon) WepDef_GetElement;
+string(float category) WepDef_GetCategoryName;
 #endif
 
 #ifndef CSQC
+// The arsenal is a post-Second-World-War one: the standard kit is the Cold War issue
+// of the 1960s-80s, the modern tier is contemporary service weapons, and the wonder
+// tiers are near-future prototypes. Names are display strings only - ids stay put, the
+// models are the ones already shipped, and the era of each slot is recorded by
+// WepDef_GetCategory().
 string(float wep, float weapon_tier) GetWeaponName =
 {
 	string weapon_name = "";
@@ -40,19 +49,19 @@ string(float wep, float weapon_tier) GetWeaponName =
 	switch (wep)
 	{
 		case W_COLT:
-			weapon_name = "Colt M1911";
+			weapon_name = "M1911A1";
 			break;
 		case W_BIATCH:
-      		weapon_name = "Mustang & Sally";
+      		weapon_name = "Cobra & Mongoose";
 			break;
 		case W_KAR:
-			weapon_name = "Kar 98k";
+			weapon_name = "Remington 700";
 			break;
     	case W_ARMAGEDDON:
-			weapon_name = "Armageddon";
+			weapon_name = "Wraithmaker";
 			break;
 		case W_THOMPSON:
-			weapon_name = "Thompson";
+			weapon_name = "Uzi";
 			break;
 		case W_GIBS:
 			weapon_name = "Gibs-O-Matic";
@@ -64,7 +73,7 @@ string(float wep, float weapon_tier) GetWeaponName =
 			weapon_name = ".357 Plus 1 K1L-u";
 			break;
 		case W_BAR:
-			weapon_name = "BAR";
+			weapon_name = "RPK";
 			break;
 		case W_WIDOW:
 			weapon_name = "The Widow Maker";
@@ -76,10 +85,10 @@ string(float wep, float weapon_tier) GetWeaponName =
 			weapon_name = "The Krauss Refibrillator";
 			break;
 		case W_BROWNING:
-			weapon_name = "Browning M1919";
+			weapon_name = "M60";
 			break;
 		case W_ACCELERATOR:
-			weapon_name = "B115 Accelerator";
+			weapon_name = "M60 Accelerator";
 			break;
 		case W_DB:
 			weapon_name = "Double-Barreled Shotgun";
@@ -88,43 +97,43 @@ string(float wep, float weapon_tier) GetWeaponName =
 			weapon_name = "24 Bore Long Range";
 			break;
 		case W_FG:
-			weapon_name = "FG42";
+			weapon_name = "FN FAL";
 			break;
 		case W_IMPELLER:
-			weapon_name = "420 Impeller";
+			weapon_name = "FAL Impeller";
 			break;
 		case W_GEWEHR:
-			weapon_name = "Gewehr 43";
+			weapon_name = "G3";
 			break;
 		case W_COMPRESSOR:
-			weapon_name = "G115 Compressor";
+			weapon_name = "G3 Compressor";
 			break;
 		case W_KAR_SCOPE:
-			weapon_name = "Scoped Kar 98k";
+			weapon_name = "SVD Dragunov";
 			break;
 		case W_HEADCRACKER:
 			weapon_name = "Headcracker";
 			break;
 		case W_M1:
-			weapon_name = "M1 Garand";
+			weapon_name = "M14";
 			break;
 		case W_M1000:
-			weapon_name = "M1000";
+			weapon_name = "M1000 Match";
 			break;
 		case W_M1A1:
-			weapon_name = "M1A1 Carbine";
+			weapon_name = "SKS";
 			break;
 		case W_WIDDER:
 			weapon_name = "Widdershins RC-1";
 			break;
 		case W_M2:
-			weapon_name = "M2 Flamethrower";
+			weapon_name = "M2A1-7 Flamethrower";
 			break;
 		case W_FIW:
-			weapon_name = "F1W Nitrogen Cooled";
+			weapon_name = "F1W Cryo Projector";
 			break;
 		case W_MP40:
-			weapon_name = "MP40";
+			weapon_name = "MP5A3";
 			break;
 		case W_AFTERBURNER:
 			weapon_name = "The Afterburner";
@@ -136,25 +145,25 @@ string(float wep, float weapon_tier) GetWeaponName =
 			weapon_name = "MP115 Kollider";
 			break;
 		case W_MG:
-			weapon_name = "MG42";
+			weapon_name = "MG3";
 			break;
 		case W_BARRACUDA:
 			weapon_name = "Barracuda FU-A11";
 			break;
 		case W_PANZER:
-			weapon_name = "Panzerschrek";
+			weapon_name = "RPG-7";
 			break;
 		case W_LONGINUS:
 			weapon_name = "Longinus";
 			break;
 		case W_PPSH:
-			weapon_name = "PPSh-41";
+			weapon_name = "PP-19 Bizon";
 			break;
 		case W_REAPER:
 			weapon_name = "The Reaper";
 			break;
 		case W_PTRS:
-			weapon_name = "PTRS-41";
+			weapon_name = "Barrett M82A1";
 			break;
 		case W_PENETRATOR:
 			weapon_name = "The Penetrator";
@@ -178,22 +187,22 @@ string(float wep, float weapon_tier) GetWeaponName =
 			weapon_name = "The Snuff Box";
 			break;
 		case W_STG:
-			weapon_name = "STG-44";
+			weapon_name = "AK-47";
 			break;
 		case W_SPATZ:
 			weapon_name = "Spatz-447 +";
 			break;
 		case W_TRENCH:
-			weapon_name = "M1897 Trench Gun";
+			weapon_name = "Remington 870";
 			break;
 		case W_GUT:
 			weapon_name = "Gut Shot";
 			break;
 		case W_TYPE:
-			weapon_name = "Type 100";
+			weapon_name = "Sterling L2A3";
 			break;
 		case W_SAMURAI:
-			weapon_name = "1001 Samurais";
+			weapon_name = "L2A3 Samurai";
 			break;
 		case W_BOWIE:
 			weapon_name = "Bowie Knife";
@@ -211,13 +220,22 @@ string(float wep, float weapon_tier) GetWeaponName =
 			weapon_name = "Wunderwaffe DG-3 JZ";
 			break;
 		case W_SPRING:
-			weapon_name = "Springfield";
+			weapon_name = "M24 SWS";
 			break;
 		case W_PULVERIZER:
 			weapon_name = "Pulverizer";
 			break;
 		default:
 			break;
+	}
+
+	// Show which wonder family a weapon belongs to: the categories are gameplay, so the
+	// player should be able to read them off the pickup prompt and the ammo counter.
+	if (WepDef_IsWonderWeapon(wep)) {
+		weapon_name = strcat(weapon_name, " [");
+		weapon_name = strcat(weapon_name, WepDef_GetCategoryName(WepDef_GetCategory(wep)));
+		weapon_name = strcat(weapon_name, "]");
+		weapon_name = strzone(weapon_name);
 	}
 
 	if (game_modifiers.gameplay.packapunch.packapunch_supports_upgrade_tiers == true && weapon_tier > 0) {
@@ -242,6 +260,119 @@ string(float wep, float weapon_tier) GetWeaponName =
 	return weapon_name;
 }
 #endif
+
+// --------------------------------------------------------------------------------------
+// Weapon categories
+//
+// One table decides what every weapon is: which era of the arsenal it belongs to, or
+// which elemental wonder-weapon family it heads. Everything else in the game asks this
+// table (mystery box rules, element behaviour, menus) instead of keeping its own list of
+// ids, so adding a wonder weapon means adding one case here.
+// --------------------------------------------------------------------------------------
+float(float weapon) WepDef_GetCategory =
+{
+	switch (weapon)
+	{
+		// --- ray family: aetheric damage ---
+		case W_RAY:
+		case W_PORTER:
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			return WCAT_WONDER_AETHER;
+
+		// --- tesla family: arcs between targets ---
+		case W_TESLA:
+		case W_DG3:
+			return WCAT_WONDER_SHOCK;
+
+		// --- incendiary: leaves the target burning ---
+		case W_M2:
+		case W_AFTERBURNER:
+			return WCAT_WONDER_FIRE;
+
+		// --- cryo: slows and brittles ---
+		case W_FIW:
+			return WCAT_WONDER_CRYO;
+
+		// --- heavy: explosive payloads ---
+		case W_PULVERIZER:
+		case W_LONGINUS:
+		case W_PENETRATOR:
+			return WCAT_WONDER_HEAVY;
+
+		// --- melee and equipment ---
+		case W_BK:
+		case W_KRAUS:
+		case W_BOWIE:
+			return WCAT_MELEE;
+		case W_GRENADE:
+		case W_BETTY:
+			return WCAT_EQUIPMENT;
+
+		// --- contemporary service weapons ---
+		case W_MP5K:
+		case W_KOLLIDER:
+		case W_PPSH:
+		case W_REAPER:
+		case W_PTRS:
+			return WCAT_MODERN;
+
+		default:
+			return WCAT_RETRO;
+	}
+
+	return WCAT_RETRO;
+}
+
+// WepDef_IsWonderWeapon(weapon)
+// True for every category that behaves like a wonder weapon, i.e. the elemental
+// families - not "has a special model" or "came out of the box".
+float(float weapon) WepDef_IsWonderWeapon =
+{
+	float category = WepDef_GetCategory(weapon);
+	return (category >= WCAT_WONDER_AETHER) && (category <= WCAT_WONDER_HEAVY);
+}
+
+// WepDef_GetElement(weapon)
+// The on-hit element implied by the weapon's category. WELEM_NONE for everything that
+// is not a wonder weapon, so an ordinary gun can never set a zombie alight.
+float(float weapon) WepDef_GetElement =
+{
+	switch (WepDef_GetCategory(weapon))
+	{
+		case WCAT_WONDER_AETHER: return WELEM_AETHER;
+		case WCAT_WONDER_SHOCK:  return WELEM_SHOCK;
+		case WCAT_WONDER_FIRE:   return WELEM_FIRE;
+		case WCAT_WONDER_CRYO:   return WELEM_CRYO;
+		case WCAT_WONDER_HEAVY:  return WELEM_HEAVY;
+		default: return WELEM_NONE;
+	}
+
+	return WELEM_NONE;
+}
+
+// WepDef_GetCategoryName(category)
+// Display label for menus and the HUD, so the categories are visible to the player.
+// Categories are read by the client too: the HUD and the menus show them.
+string(float category) WepDef_GetCategoryName =
+{
+	switch (category)
+	{
+		case WCAT_RETRO:         return "Cold War";
+		case WCAT_MODERN:        return "Modern";
+		case WCAT_PROTOTYPE:     return "Prototype";
+		case WCAT_WONDER_AETHER: return "Aether";
+		case WCAT_WONDER_SHOCK:  return "Shock";
+		case WCAT_WONDER_FIRE:   return "Incendiary";
+		case WCAT_WONDER_CRYO:   return "Cryo";
+		case WCAT_WONDER_HEAVY:  return "Heavy";
+		case WCAT_MELEE:         return "Melee";
+		case WCAT_EQUIPMENT:     return "Equipment";
+		default: return "Unknown";
+	}
+
+	return "Unknown";
+}
 
 float(float wep) GetFiretype =
 {
@@ -5221,21 +5352,12 @@ float(float weapon) WepDef_OnlyOneAllowed =
 
 //
 // WepDef_IsRayGun(weapon)
-// Returns true for weapons in the Ray Gun family.
+// Returns true for weapons in the Ray Gun family - now just a question for the category
+// table, so the aether family grows with the table instead of with this function.
 //
 float(float weapon) WepDef_IsRayGun =
 {
-	switch(weapon) {
-		case W_RAY:
-		case W_PORTER:
-		case W_RAYMK2:
-		case W_PORTERMK2:
-			return true;
-		default:
-			return false;
-	}
-
-	return false;
+	return WepDef_GetCategory(weapon) == WCAT_WONDER_AETHER;
 }
 
 //

@@ -238,14 +238,40 @@ float 	map_compatibility_mode;
 #define W_SPRING       58
 #define W_PULVERIZER   59
 #define W_RAYMK2	   60
-#define W_PORTERMK2	   61
-
-//Custom Weapons
+#define W_PORTERMK2	   61//Custom Weapons
 //FIXME - use array?
 #define W_CUSTOM1 	   70
 #define W_CUSTOM2	   71
-#define W_CUSTOM3 	   72
-#define W_CUSTOM4 	   73
+#define W_CUSTOM3	   72
+#define W_CUSTOM4	   73
+
+// Weapon categories. Every weapon belongs to exactly one; the era tiers cover the
+// standard arsenal (the Cold War issue kit, contemporary service weapons and
+// near-future prototypes) and the WONDER_* tiers are the elemental wonder-weapon
+// families, each with its own on-hit behaviour. Weapon ids are baked into compiled
+// maps, so ids may only be appended - never renumbered - and a weapon's category is
+// how the game tells an arsenal weapon from a wonder weapon.
+#define WCAT_RETRO          0	// Cold War issue: 1960s-80s
+#define WCAT_MODERN         1	// contemporary service weapons
+#define WCAT_PROTOTYPE      2	// near-future / experimental
+#define WCAT_WONDER_AETHER  3	// ray family: raw aetheric damage
+#define WCAT_WONDER_SHOCK   4	// tesla family: arcs to nearby targets
+#define WCAT_WONDER_FIRE    5	// incendiary: sets the target alight
+#define WCAT_WONDER_CRYO    6	// cryo: slows and brittles the target
+#define WCAT_WONDER_HEAVY   7	// heavy: explosive payloads
+#define WCAT_MELEE          8	// knives and other melee
+#define WCAT_EQUIPMENT      9	// grenades, betties and other gear
+#define WCAT_COUNT          10
+
+// On-hit element carried by a weapon's category. A weapon with WELEM_NONE is a plain
+// arsenal weapon; everything else leaves its element on whatever it hits.
+#define WELEM_NONE      0
+#define WELEM_AETHER    1
+#define WELEM_SHOCK     2
+#define WELEM_FIRE      3
+#define WELEM_CRYO      4
+#define WELEM_HEAVY     5
+
 
 
 #define BASE_FRAME			1	// The frame the Weapon idles at

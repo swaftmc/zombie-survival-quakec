@@ -177,6 +177,40 @@ void() Test_Weapons_RayGunClassification =
 };
 
 //
+// Test_Weapons_WonderCategories()
+// The wonder weapons are grouped into elemental families, and every family must be a
+// wonder category, carry its own element, and be findable by name.
+//
+void() Test_Weapons_WonderCategories =
+{
+	float wonder_list[] = { W_RAY, W_TESLA, W_AFTERBURNER, W_FIW, W_PULVERIZER };
+	float element_list[] = { WELEM_AETHER, WELEM_SHOCK, WELEM_FIRE, WELEM_CRYO, WELEM_HEAVY };
+
+	for (float i = 0; i < wonder_list.length; i++) {
+		Test_Assert(WepDef_IsWonderWeapon(wonder_list[i]),
+				sprintf("[%s] is a wonder weapon but is not classified as one!", GetWeaponName(wonder_list[i], -1)));
+		Test_Assert(WepDef_GetElement(wonder_list[i]) == element_list[i],
+				sprintf("[%s] does not carry the element its category implies!", GetWeaponName(wonder_list[i], -1)));
+		Test_Assert(WepDef_GetCategoryName(WepDef_GetCategory(wonder_list[i])) != "Unknown",
+				sprintf("[%s] has no readable category name!", GetWeaponName(wonder_list[i], -1)));
+	}
+
+	// ordinary arsenal weapons are era-tiered and carry no element at all
+	float arsenal_list[] = { W_COLT, W_STG, W_MP40, W_PPSH, W_TRENCH };
+
+	for (float j = 0; j < arsenal_list.length; j++) {
+		Test_Assert(!WepDef_IsWonderWeapon(arsenal_list[j]),
+				sprintf("[%s] is a standard weapon but is classified as a wonder weapon!", GetWeaponName(arsenal_list[j], -1)));
+		Test_Assert(WepDef_GetElement(arsenal_list[j]) == WELEM_NONE,
+				sprintf("[%s] carries an element but is not a wonder weapon!", GetWeaponName(arsenal_list[j], -1)));
+	}
+
+	Test_Assert(WepDef_GetCategory(W_COLT) == WCAT_RETRO, "The M1911A1 is not Cold War issue!");
+	Test_Assert(WepDef_GetCategory(W_MP5K) == WCAT_MODERN, "The MP5K is not a modern weapon!");
+	Test_Assert(WepDef_GetCategory(W_BOWIE) == WCAT_MELEE, "The Bowie Knife is not melee!");
+};
+
+//
 // Test_Weapons_BurstCannotBeInterruptedBySwap()
 // Ensures a weapon swap cannot replace the animation callback responsible for
 // completing a burst and leave the player permanently action-locked.

@@ -141,11 +141,16 @@ float(entity user, float weapon_id) MBOX_CanPlayerReceiveWeapon =
 	if (Weapon_PlayerHasWeapon(user, weapon_id, true))
 		return false;
 
-	if (!WepDef_IsRayGun(weapon_id))
+	// a player may only hold one wonder weapon per family, so the box cannot hand out a
+	// second ray gun - or, since the categories were extended, a second tesla/cryo/heavy
+	// weapon beside the one already carried. Arsenal weapons are unrestricted.
+	if (!WepDef_IsWonderWeapon(weapon_id))
 		return true;
 
+	float category = WepDef_GetCategory(weapon_id);
+
 	for (float i = 0; i < MAX_PLAYER_WEAPONS; i++) {
-		if (WepDef_IsRayGun(user.weapons[i].weapon_id))
+		if (WepDef_GetCategory(user.weapons[i].weapon_id) == category)
 			return false;
 	}
 
