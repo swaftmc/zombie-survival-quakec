@@ -6,7 +6,7 @@ float menu_maps_init;
 //
 // Menu_Maps_Init()
 // Array lookup optimization that stores
-// the array index of Stock NZ:P maps
+// the array index of Stock ZSP maps
 // from the user_maps struct.
 //
 void() Menu_Maps_Init =

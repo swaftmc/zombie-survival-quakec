@@ -101,7 +101,7 @@ void SV_WP_SetAdd(float wp, float isopen)
 		if (wp == open)
 			open = waypoints[wp].prev;
 
-		// update links so open set doesn't get fucked
+		// update links so open set doesn't get messed
 		waypoints[waypoints[wp].prev].next = waypoints[wp].next;
 		waypoints[waypoints[wp].next].prev = waypoints[wp].prev;
 

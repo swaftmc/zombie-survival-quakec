@@ -415,7 +415,7 @@ void(entity victim, entity attacker, float damage, float d_style) DamageHandler 
 			return;
 		}
 
-		// Abstinence Program
+		// Untouchable
 		victim.ach_tracker_abst = 1;
 		
 		victim.health -= damage;

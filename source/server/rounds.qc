@@ -181,7 +181,7 @@ void() EndRound =
 		round_changetime = time + 0.2;
 
 
-	// No Perks? No Problem & Abstinence Program
+	// No Perks? No Problem & Untouchable
 	if (rounds >= 10) {
 		entity players;
 		players = find(world, classname, "player");

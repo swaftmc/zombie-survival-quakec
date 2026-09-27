@@ -49,7 +49,7 @@ void() ToggleMenu =
 
 //
 // GenerateAlphaTransparencyQ3Shaders()
-// What a mouth-full! Anyway, NZ:P supports
+// What a mouth-full! Anyway, ZSP supports
 // alpha transparency via a pseudo-hack where
 // if the last character of a model is "$"
 // we render with special blend modes. To
@@ -114,7 +114,7 @@ float() GenerateAlphaTransparencyQ3Shaders =
 		// Body of our shader file we're writing.
 		string shader_content = sprintf(
 			"//\n"
-			"// Quake III Shader generated automatically by Nazi Zombies: Portable. Do not modify.\n"
+			"// Quake III Shader generated automatically by Zombie Survival: Portable. Do not modify.\n"
 			"//\n"
 			"\n"
 			"%s_0.lmp\n" // full_path
@@ -138,7 +138,7 @@ float() GenerateAlphaTransparencyQ3Shaders =
 
 noref void(float apiver, string enginename, float enginever) CSQC_Init =
 {
-	setwindowcaption("Nazi Zombies: Portable");
+	setwindowcaption("Zombie Survival: Portable");
 	
 	precache_sound("sounds/menu/enter.wav");
 	precache_sound("sounds/menu/navigate.wav");
@@ -1381,7 +1381,7 @@ noref void() CSQC_Parse_Event =
 			switch(active_gamemode) {
 				case GAMEMODE_CLASSIC: 
 					if (chaptertitle == "")
-						chaptertitle = "'Nazi Zombies'";
+						chaptertitle = "'Zombie Survival'";
 					break;
 				case GAMEMODE_GUNGAME:
 					chaptertitle = "GUN GAME";

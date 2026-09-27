@@ -262,7 +262,7 @@ void() misc_model_think =
 
 void() misc_model = 
 {
-	// NZ:P Edit -- Allow only spawning for specific modes or
+	// ZSP Edit -- Allow only spawning for specific modes or
 	// months of the year.
 	if (self.gamemode_limiter != 0) {
 		if (self.gamemode_limiter != cvar("sv_gamemode")) {
@@ -277,12 +277,12 @@ void() misc_model =
 		return;
 	}
 
-	// NZ:P Edit -- We use .model instead of .mdl, but keep
+	// ZSP Edit -- We use .model instead of .mdl, but keep
 	// compatibility with progs_dump's .mdl
 	if (self.mdl != "")
 		self.model = self.mdl;
 
-	// NZ:P Edit -- No model specified, use our missing/replacement
+	// ZSP Edit -- No model specified, use our missing/replacement
 	// model.
 	if (self.model == "") {
 		if (cvar("developer"))

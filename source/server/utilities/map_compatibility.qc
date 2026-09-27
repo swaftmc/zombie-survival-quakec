@@ -2,7 +2,7 @@
 	server/utilities/map_compatibility.qc
 
 	Converts entities and other gameplay functions from earlier versions 
-    of NZ:P to work here.
+    of ZSP to work here.
 
 	Copyright (C) 2021-2024 NZ:P Team
 
@@ -27,7 +27,7 @@
 */
 
 //
-// NZ:P Beta Waypoints
+// ZSP Beta Waypoints
 //
 
 //
@@ -39,7 +39,7 @@
 #ifdef FTE
 void() Compat_TryLoadBetaWaypoints =
 {
-    // NZ:P Beta Waypoint files are simple, but contain redundant and
+    // ZSP Beta Waypoint files are simple, but contain redundant and
     // hard to understand data. As far as I can gather both by interpretation
     // and by reading aging source code, the structure for waypoints are as
     // follows:
@@ -133,7 +133,7 @@ void() Compat_TryLoadBetaWaypoints =
 #endif // FTE
 
 //
-// NZ:P Beta Props
+// ZSP Beta Props
 //
 
 //
@@ -162,7 +162,7 @@ void() Compat_ConvertWorldModelScales =
     while(props != world) {
         // We only check the first path, this *technically* makes
         // a nasty assumption no one used the viewmodels ever..
-        // which I damn sure hope is true, for the sake of that guy's sanity..
+        // which I certainly hope is true, for the sake of that guy's sanity..
         if (substring(props.model, 0, 15) == "models/weapons/") {
             props.scale = 0.75;
         }
@@ -188,12 +188,12 @@ void() Compat_ConvertPropScaling =
 };
 
 //
-// NZ:P Beta Wall Weapons
+// ZSP Beta Wall Weapons
 //
 
 //
 // Compat_ConvertBetaWallWeapons()
-// NZ:P Beta used different weapon IDs to refer
+// ZSP Beta used different weapon IDs to refer
 // to weapon indexes, this fixes that.
 //
 void() Compat_ConvertBetaWallWeapons =
@@ -266,7 +266,7 @@ void() Compat_ConvertBetaWallWeapons =
 };
 
 //
-// NZ:P Beta Barricades
+// ZSP Beta Barricades
 //
 
 //
@@ -293,7 +293,7 @@ void() Compat_ConvertBetaBarricade =
 void() item_cover = {map_compatibility_mode = MAP_COMPAT_BETA; item_barricade(); Compat_ConvertBetaBarricade();};
 
 //
-// NZ:P Beta Mystery Box
+// ZSP Beta Mystery Box
 //
 
 //
@@ -327,7 +327,7 @@ void() Compat_FixMysteryBox =
 };
 
 //
-// NZ:P Beta Power Switch
+// ZSP Beta Power Switch
 //
 
 //
@@ -351,12 +351,12 @@ void() Compat_FixPowerSwitch =
 };
 
 //
-// NZ:P Beta Perk-A-Cola Machines
+// ZSP Beta Perk-A-Cola Machines
 //
 
 //
 // Compat_RelocateBetaPerkMachine()
-// Perk-A-Cola models in NZ:P Beta used to have
+// Perk-A-Cola models in ZSP Beta used to have
 // non-center origin offsets, so they need re-placed
 // to be (nearly) matching what they were intended to be.
 // This also sets the scaling correctly, sue me.
@@ -396,7 +396,7 @@ void() item_staminup = {map_compatibility_mode = MAP_COMPAT_BETA; Compat_Relocat
 void() item_pap = {map_compatibility_mode = MAP_COMPAT_BETA; Compat_RelocateBetaPerkMachine(COMPAT_RELOCAT_PAP); perk_pap();};
 
 //
-// NZ:P Beta Triggers
+// ZSP Beta Triggers
 //
 
 #ifdef FTE
@@ -468,7 +468,7 @@ void() trigger_command =
 };
 
 //
-// General NZ:P Compatibility
+// General ZSP Compatibility
 //
 
 //

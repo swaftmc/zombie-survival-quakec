@@ -1,5 +1,5 @@
 """
-Nazi Zombies: Portable QuakeC CRC generator
+Zombie Survival: Portable QuakeC CRC generator
 
 Takes input .CSV files and outputs an FTEQCC-compilable
 QuakeC struct with its contents, always assumes the first

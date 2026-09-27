@@ -1,7 +1,7 @@
-# Nazi Zombies: Portable QuakeC
+# Zombie Survival: Portable QuakeC
 
 ## About
-This is the QuakeC portion of the NZ:P source code. QuakeC is responsible for most game-related code such as weapon logic, ai, and Perks. You can read more about QuakeC on the [Wikipedia page](https://en.wikipedia.org/wiki/QuakeC). NZ:P makes use of CSQC for PC/FTE.
+This is the QuakeC portion of the ZSP source code. QuakeC is responsible for most game-related code such as weapon logic, ai, and Perks. You can read more about QuakeC on the [Wikipedia page](https://en.wikipedia.org/wiki/QuakeC). ZSP makes use of CSQC for PC/FTE.
 
 ## Project Structure
 Here is a brief explanation for each of the (sub)directories in this repository:
@@ -14,12 +14,12 @@ Here is a brief explanation for each of the (sub)directories in this repository:
 * `tools`: Build scripts to compile the QuakeC into `.dat` and `.lno` files.
 
 ## Updating
-While it's usually recommended to stay on the QuakeC version provided with your build of NZ:P, you may want to update it to the current development builds to test new features and changes. To do this, navigate to the [Releases](https://github.com/nzp-team/quakec/releases/tag/bleeding-edge) page and follow the instructions there for downloading and installing.
+While it's usually recommended to stay on the QuakeC version provided with your build of ZSP, you may want to update it to the current development builds to test new features and changes. To do this, navigate to the [Releases](https://github.com/nzp-team/quakec/releases/tag/bleeding-edge) page and follow the instructions there for downloading and installing.
 
 ## Building (Beginner Friendly)
 There are no prerequisites or dependancies needed to build QuakeC other than a working Windows, macOS, or Linux-based machine.
 
-Before you can build the NZ:P QuakeC, you must either [download](https://github.com/nzp-team/quakec/archive/refs/heads/main.zip) this repository (easy) or [clone it](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) (for developers).
+Before you can build the ZSP QuakeC, you must either [download](https://github.com/nzp-team/quakec/archive/refs/heads/main.zip) this repository (easy) or [clone it](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) (for developers).
 
 [Python](https://www.python.org/) 3.7 or above is required to execute additional required components for hash table generation. You can install the [required modules](https://raw.githubusercontent.com/nzp-team/QCHashTableGenerator/main/requirements.txt) with `pip install -r requirements.txt` pointing to the provided file.
 

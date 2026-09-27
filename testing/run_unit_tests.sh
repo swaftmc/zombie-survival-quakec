@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Nazi Zombies: Portable
+# Zombie Survival: Portable
 # QuakeC Unit test runner.
 # ----
 # This is intended to be used via a Docker 
@@ -73,7 +73,7 @@ function apply_assets_override()
 
 function download_nzp()
 {
-    echo "[INFO]: Obtaining latest Nazi Zombies: Portable Linux x86_64 release.."
+    echo "[INFO]: Obtaining latest Zombie Survival: Portable Linux x86_64 release.."
     cd "${WORKING_DIRECTORY}"
     wget https://github.com/nzp-team/nzportable/releases/download/nightly/nzportable-linux64.zip
     mkdir nzportable-linux64

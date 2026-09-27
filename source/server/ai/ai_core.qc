@@ -556,7 +556,7 @@ void(float dist) Window_Hop =
 
 
 //
-// FTE's custom "tracemove" -- no way in hell I'm reimplementing SV_Move
+// FTE's custom "tracemove" -- no way I'm reimplementing SV_Move
 // in QuakeC. So this is just a really bad traceline hack. We can't even
 // use tracebox since that's limited by BSP hulls,
 //
@@ -699,7 +699,7 @@ void() NextPathfindToEnemy {
 		self.goalentity = self.enemy;
 		self.chase_time = time + 6;
 	} else {
-		bprint(PRINT_HIGH, "NextPathfind Failure\n");		// this lags like hell
+		bprint(PRINT_HIGH, "NextPathfind Failure\n");		// this lags badly
 	}
 
 #else

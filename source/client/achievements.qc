@@ -106,13 +106,13 @@ void() Achievement_Init =
 {
     Achievement_Create(0,   "ready",                "Ready..",                                      "Reach Round 5");
     Achievement_Create(1,   "steady",               "Steady..",                                     "Reach Round 10");
-    Achievement_Create(2,   "go_hell_no",           "Go? Hell No...",                               "Reach Round 15");
+    Achievement_Create(2,   "go_hell_no",           "Not Today...",                               "Reach Round 15");
     Achievement_Create(3,   "where_legs_go",        "Where Did Legs Go?",                           "Turn a Zombie into a Crawler");
-    Achievement_Create(4,   "the_f_bomb",           "The F Bomb",                                   "Use the Nuke Power-Up to kill a     single Zombie");
+    Achievement_Create(4,   "big_bang",           "Big Bang",                                   "Use the Nuke Power-Up to kill a     single Zombie");
     Achievement_Create(5,   "no_perks_no_problem",  "No Perks? No Problem",                         "Survive an entire Round without     Perks past Round 15 or higher");
-    Achievement_Create(6,   "dipsomaniac",          "Dipsomaniac",                                  "Hold all Perk-A-Colas at once in a  single Game");
+    Achievement_Create(6,   "dipsomaniac",          "Fully Perked",                                  "Hold all Perk-A-Colas at once in a  single Game");
     Achievement_Create(7,   "oops",                 "Oops!",                                        "Nearly die from fall damage");
-    Achievement_Create(8,   "abstinence_program",   "Abstinence Program",                           "Survive to Round 10 without taking  any enemy damage");
+    Achievement_Create(8,   "abstinence_program",   "Untouchable",                           "Survive to Round 10 without taking  any enemy damage");
     Achievement_Create(9,   "pro_gamer_move",       "Pro-Gamer Move",                               "Die on Round 1 with no Ammo         remaining");
     Achievement_Create(10,  "spinning_plates",      "Spinning Plates",                              "Keep entry points Barricaded all the way to Round 10");
     Achievement_Create(11,  "unlucky",              "Unlucky",                                      "Have the Mystery Box move 10 times");
@@ -133,7 +133,7 @@ void() Achievement_Init =
     Achievement_Create(26,  "slasher",              "Slasher",                                      "Perform 100 total Melee kills");
     Achievement_Create(27,  "made_by_children",     "Made by Children",                             "Get a Zombie stuck for 5 minutes");
     Achievement_Create(28,  "increase_firepower",   "Increase your Firepower!",                     "Use the Pack-A-Punch for the first  time");
-    Achievement_Create(29,  "kraut_tongue",         "Kraut Got Your Tongue?",                       "Get 25 Headshots");
+    Achievement_Create(29,  "headhunter",         "Headhunter",                       "Get 25 Headshots");
     Achievement_Create(30,  "mindblowing",          "Mindblowing",                                  "Get 250 Headshots");
     Achievement_Create(31,  "thanks_explosions",    "Big Thanks to Explosions",                     "Kill 10 Zombies with a single       Grenade");
     Achievement_Create(32,  "mbox_maniac",          "Mystery Box Manaic",                           "Use the Mystery Box 20 times in a   single Game");
@@ -144,7 +144,7 @@ void() Achievement_Init =
     Achievement_Create(37,  "2021",                 "Twenty-Twenty-One",                            "Land 20 Headshots, with 20 Bullets, with one Clip");
     Achievement_Create(38,  "warmed_up",            "Getting Warmed Up",                            "Earn 10 Achievements");
     Achievement_Create(39,  "half_way",             "About Half-Way",                               "Earn 20 Achievements");
-    Achievement_Create(40,  "75_percent",           "I mean.. 75% is Passing",                     "Earn 30 Achievements");
+    Achievement_Create(40,  "75_percent",           "Almost There",                     "Earn 30 Achievements");
     Achievement_Create(41,  "over_achiever",        "Over-Achiever",                                "Earn all 42 Achievements");
 
     Achievement_Load();

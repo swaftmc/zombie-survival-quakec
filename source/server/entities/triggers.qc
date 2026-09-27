@@ -443,11 +443,11 @@ void() trigger_awardpoints =
 // Quake Triggers
 //
 
-// NZ:P START -- Spawnflags for not hurting clients and not hurting AI
+// ZSP START -- Spawnflags for not hurting clients and not hurting AI
 #define HURT_SPAWNFLAG_NOAI			1		// Does not affect AI
 #define HURT_SPAWNFLAG_NOCLIENT		2		// Does not affect clients (players)
 #define HURT_SPAWNFLAG_DIEINSTANTLY	4		// Player will instantly die and spectate, regardless of other conditions
-// NZ:P END
+// ZSP END
 
 void() hurt_on =
 {

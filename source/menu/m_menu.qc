@@ -377,9 +377,9 @@ float(float order, string id, string bsp_name, float map_category, float usermap
 		vector coords_pos = [0, 0];
 
 		switch(map_category) {
-			case MAP_CATEGORY_NZPBETA: coords_pos = [0, 0]; badge_name = "NZ:P BETA (2011)"; break;
+			case MAP_CATEGORY_NZPBETA: coords_pos = [0, 0]; badge_name = "ZSP BETA (2011)"; break;
 			case MAP_CATEGORY_WAW: coords_pos = [0.25, 0]; badge_name = "WORLD AT WAR"; break;
-			case MAP_CATEGORY_NZP: coords_pos = [0, 0.5]; badge_name = "NZ:P ORIGINAL"; break;
+			case MAP_CATEGORY_NZP: coords_pos = [0, 0.5]; badge_name = "ZSP ORIGINAL"; break;
 			case MAP_CATEGORY_BLACKOPSDS: coords_pos = [0.25, 0.5]; badge_name = "BLACK OPS (DS)"; break;
 			case MAP_CATEGORY_USER: coords_pos = [0.5, 0]; badge_name = "USERMAP"; break;
 		}

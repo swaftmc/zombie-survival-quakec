@@ -163,7 +163,7 @@ void() PU_PopulateArray =
 	while(amount) {
 		i = floor(random() * amount--);
 
-		// macro'd these to avoid hell with __inout :)
+		// macro'd these to avoid trouble with __inout :)
 		PU_CopyStruct(t, powerup_array[amount])
 		PU_CopyStruct(powerup_array[amount], powerup_array[i])
 		PU_CopyStruct(powerup_array[i], t)
@@ -285,7 +285,7 @@ void() PU_NukeFinalize =
 {
 	entity players;
 
-	// give 'The F Bomb'
+	// give 'Big Bang'
 	if (self.kills == 1) {
 		GiveAchievement(4);
 	}
@@ -1238,7 +1238,7 @@ void(vector where, float type) Spawn_Powerup =
 
 	setmodel(sparkle,"models/sprites/sprkle.spr");
 
-	// Scale down for NZ:P Beta
+	// Scale down for ZSP Beta
 	if (map_compatibility_mode == MAP_COMPAT_BETA) {
 		powerup.scale = 0.66;
 		sparkle.scale = 0.45;

@@ -367,7 +367,7 @@ void(entity who, float preferred_stance, float play_animation) Player_SetStance 
 			setsize(self, PLAYER_MINS_STANDING, PLAYER_MAXS_STANDING);
 	}
 
-	// NZ:P Beta should change the stances by a different amount,
+	// ZSP Beta should change the stances by a different amount,
 	// to avoid looking like you're in the ground..
 	float height_diff_crouch, height_diff_prone;
 	if (map_compatibility_mode == MAP_COMPAT_BETA) {
@@ -569,7 +569,7 @@ void() PlayerPreThink =
 		self.maxspeed = 30;
 	} else {
 
-		// Walk slower to account for NZ:P Beta Scaling.
+		// Walk slower to account for ZSP Beta Scaling.
 		if (map_compatibility_mode == MAP_COMPAT_BETA)
 			self.maxspeed = 150;
 		else
@@ -1034,7 +1034,7 @@ void() PlayerSpawn =
 	
 	self.fixangle = true;
 
-	// NZ:P Beta used Quake BSP 29, so set bounding box accordingly.
+	// ZSP Beta used Quake BSP 29, so set bounding box accordingly.
 	if (map_compatibility_mode == MAP_COMPAT_BETA) {
 		self.view_ofs = VIEW_OFS_QK;
 		setsize(self, PLAYER_MINS_QUAKE, PLAYER_MAXS_QUAKE);
@@ -1132,7 +1132,7 @@ void() SpectatorSpawn =
 	
 	self.fixangle = true;
 
-	// NZ:P Beta used Quake BSP 29, so set bounding box accordingly.
+	// ZSP Beta used Quake BSP 29, so set bounding box accordingly.
 	if (map_compatibility_mode == MAP_COMPAT_BETA) {
 		self.view_ofs = VIEW_OFS_QK;
 		setsize(self, PLAYER_MINS_QUAKE, PLAYER_MAXS_QUAKE);

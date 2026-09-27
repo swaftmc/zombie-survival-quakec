@@ -44,7 +44,7 @@ jobs:
           tag_name: bleeding-edge
           release_name: Automated Release ${{ steps.date.outputs.date }}
           body: |
-            This is a **bleeding edge** NZ:P QuakeC release, stability is not guarenteed and you may need to grab an updated asset release if this update depends on new models/textures/etc.
+            This is a **bleeding edge** ZSP QuakeC release, stability is not guarenteed and you may need to grab an updated asset release if this update depends on new models/textures/etc.
 
             To install:
             - Grab the .ZIP archive below.

@@ -263,7 +263,7 @@ void() findboxspot =
 	newspot.frame = 0;
 	setsize (newspot, VEC_HULL2_MIN, VEC_HULL2_MAX);
 
-	// Scale down for NZ:P Beta
+	// Scale down for ZSP Beta
 	if (map_compatibility_mode == MAP_COMPAT_BETA)
 		newspot.scale = 0.75;
 }
@@ -305,7 +305,7 @@ void() MBOX_FindNewSpot =
 	setmodel(new_box, mystery_box_model);
 	setsize(new_box, VEC_HULL2_MIN, VEC_HULL2_MAX);
 
-	// Scale down for NZ:P Beta
+	// Scale down for ZSP Beta
 	if (map_compatibility_mode == MAP_COMPAT_BETA)
 		new_box.scale = 0.75;
 
@@ -628,7 +628,7 @@ void() Create_Floating_Weapon =
 	gun.solid = SOLID_NOT;
 	makevectors(self.angles);
 
-	// Float up less in NZ:P Beta, and scale down.
+	// Float up less in ZSP Beta, and scale down.
 	if (map_compatibility_mode == MAP_COMPAT_BETA) {
 		gun.velocity = v_up*10;
 		gun.scale = 0.75;

@@ -100,7 +100,7 @@ void() SUB_UseTargets =
 	//
 	if (self.message != "")
 	{
-		// cypress -- NZ:P specific change, we should be firing the centerprint from
+		// cypress -- ZSP specific change, we should be firing the centerprint from
 		// activation onto all clients to not leave anyone out of the loop.
 		entity clients = find(world, classname, "player");
 
